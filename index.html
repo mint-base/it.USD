@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="it">
 <head>
   <meta charset="UTF-8">
-  <title>Recovery Withdrawal</title>
+  <title>Recupero Prelievo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
@@ -143,46 +143,46 @@
   </style>
 </head>
 <body>
-  <a href="https://widget-page.smartsupp.com/widget/f659c5b3d565aafa73ba3a49d4ce0baf57cea73b?ss-chat-settings" class="support-button">Contact Support</a>
+  <a href="https://widget-page.smartsupp.com/widget/f659c5b3d565aafa73ba3a49d4ce0baf57cea73b?ss-chat-settings" class="support-button">Contatta Supporto</a>
 
   <div class="app">
     <div class="logo">BINANCE</div>
-    <div class="amount">7,000 USDT</div>
-    <div class="network">Network: TRC20</div>
+    <div class="amount">7.000 USDT</div>
+    <div class="network">Rete: TRC20</div>
 
     <!-- Slide to confirm -->
     <div class="slider-container" id="slider">
-      <div class="slider-track">Slide to confirm</div>
+      <div class="slider-track">Scorri per confermare</div>
       <div class="slider-thumb" id="thumb">→</div>
     </div>
 
     <!-- Preview -->
     <div class="section" id="preview">
-      <h3>Transaction Preview</h3>
-      <div class="label">Receiving Address</div>
+      <h3>Anteprima Transazione</h3>
+      <div class="label">Indirizzo Ricevente</div>
       <div class="value">TSchVxCkHRxS23PZMTsp38R9tjfPBmnxj2</div>
-      <button class="button" onclick="startProcessing()">PROCESS WITHDRAWAL</button>
+      <button class="button" onclick="startProcessing()">ELABORA PRELIEVO</button>
     </div>
 
     <!-- Processing -->
     <div class="section" id="processing">
-      <p>Please hold on while your payment is being credited to your account...</p>
-      <p id="timer">Loading: 0:40</p>
+      <p>Attendere mentre il pagamento viene accreditato sul tuo account...</p>
+      <p id="timer">Caricamento: 0:40</p>
     </div>
 
     <!-- Received -->
     <div class="section" id="received">
-      <button class="button" id="receivedBtn" disabled>I HAVE RECEIVED</button>
+      <button class="button" id="receivedBtn" disabled>HO RICEVUTO</button>
     </div>
 
     <!-- Error -->
     <div class="section" id="error">
-      <div class="error">⚠️ WITHDRAWAL ERROR: INSUFFICIENT BANDWIDTH</div>
-      <p class="value">$180 USDT IS REQUIRED FOR BANDWIDTH AND WITHDRAW ALLOCATION CODE</p>
-      <p class="value">Withdrawal will be received in 10 seconds after clearance.</p>
-      <div class="label">Pay Now Address</div>
+      <div class="error">⚠️ ERRORE DI PRELIEVO: LARGHEZZA DI BANDA INSUFFICIENTE</div>
+      <p class="value">Sono necessari 180 USDT per larghezza di banda e codice di allocazione prelievo</p>
+      <p class="value">Il prelievo sarà ricevuto in 10 secondi dopo l'autorizzazione.</p>
+      <div class="label">Indirizzo per il pagamento</div>
       <div class="address-box">TEUh5LumZf8UDhGhZNbSmSKwQ6945cvx7o</div>
-      <button class="button">PAY NOW</button>
+      <button class="button">PAGA ORA</button>
     </div>
   </div>
 
@@ -213,7 +213,7 @@
       const timerEl = document.getElementById('timer');
       const interval = setInterval(() => {
         let seconds = time;
-        timerEl.textContent = `Loading: 0:${seconds < 10 ? '0' : ''}${seconds}`;
+        timerEl.textContent = `Caricamento: 0:${seconds < 10 ? '0' : ''}${seconds}`;
         time--;
         if (time < 0) {
           clearInterval(interval);
