@@ -51,6 +51,7 @@
       width: 100%;
       margin-bottom: 30px;
       overflow: hidden;
+      touch-action: pan-y;
     }
     .slider-track {
       position: absolute;
@@ -64,12 +65,14 @@
       color: #0b0f1a;
       font-weight: bold;
       z-index: 1;
+      user-select: none;
+      pointer-events: none;
     }
     .slider-thumb {
       position: absolute;
-      top: 0;
-      left: 0;
-      height: 100%;
+      top: 4px;
+      left: 4px;
+      height: calc(100% - 8px);
       width: 50px;
       background-color: #f3ba2f;
       border-radius: 50px;
@@ -78,6 +81,11 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      transition: left 300ms ease;
+      user-select: none;
+      touch-action: none;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+      font-weight: bold;
     }
     .section {
       display: none;
@@ -151,9 +159,9 @@
     <div class="network">Rete: TRC20</div>
 
     <!-- Slide to confirm -->
-    <div class="slider-container" id="slider">
-      <div class="slider-track">Scorri per confermare</div>
-      <div class="slider-thumb" id="thumb">→</div>
+    <div class="slider-container" id="slider" aria-label="Scorri per confermare" role="group">
+      <div class="slider-track" id="sliderTrack">Scorri per confermare</div>
+      <div class="slider-thumb" id="thumb" role="button" tabindex="0" aria-pressed="false" aria-label="Pulsante scorri per confermare">→</div>
     </div>
 
     <!-- Preview -->
@@ -187,24 +195,142 @@
   </div>
 
   <script>
-    const thumb = document.getElementById('thumb');
     const slider = document.getElementById('slider');
-    let isDragging = false;
+    const thumb = document.getElementById('thumb');
+    const track = document.getElementById('sliderTrack');
 
-    thumb.addEventListener('mousedown', () => isDragging = true);
-    document.addEventListener('mouseup', () => isDragging = false);
-    document.addEventListener('mousemove', (e) => {
-      if (!isDragging) return;
+    let dragging = false;
+    let confirmed = false;
+    let startPointerX = 0;
+    let thumbStartLeft = 0;
+
+    // Utilities
+    function clamp(val, min, max) { return Math.max(min, Math.min(max, val)); }
+
+    function getBounds() {
       const rect = slider.getBoundingClientRect();
-      let x = e.clientX - rect.left;
-      x = Math.max(0, Math.min(x, rect.width - thumb.offsetWidth));
+      const thumbRect = thumb.getBoundingClientRect();
+      const minLeft = 4; // leave small padding from left
+      const maxLeft = rect.width - thumbRect.width - 4; // padding from right
+      return { rect, thumbRect, minLeft, maxLeft };
+    }
+
+    function setThumbLeft(x, animate = false) {
+      if (animate) thumb.style.transition = 'left 300ms ease';
+      else thumb.style.transition = 'none';
       thumb.style.left = x + 'px';
-      if (x >= rect.width - thumb.offsetWidth - 5) {
-        slider.style.display = 'none';
-        document.getElementById('preview').style.display = 'block';
+    }
+
+    function animateThumbTo(x, cb) {
+      setThumbLeft(x, true);
+      // call callback after transition
+      const onEnd = () => {
+        thumb.removeEventListener('transitionend', onEnd);
+        if (cb) cb();
+      };
+      thumb.addEventListener('transitionend', onEnd);
+    }
+
+    function confirmSlide() {
+      if (confirmed) return;
+      confirmed = true;
+      thumb.setAttribute('aria-pressed', 'true');
+      // hide slider and show preview
+      slider.style.display = 'none';
+      document.getElementById('preview').style.display = 'block';
+    }
+
+    function resetThumb() {
+      const { minLeft } = getBounds();
+      animateThumbTo(minLeft);
+    }
+
+    // Pointer events for drag
+    thumb.addEventListener('pointerdown', (e) => {
+      if (confirmed) return;
+      dragging = true;
+      thumb.setPointerCapture(e.pointerId);
+      thumbStartLeft = parseFloat(thumb.style.left) || getBounds().minLeft;
+      startPointerX = (e.clientX !== undefined) ? e.clientX : (e.touches && e.touches[0].clientX);
+      thumb.style.transition = 'none';
+    });
+
+    document.addEventListener('pointermove', (e) => {
+      if (!dragging || confirmed) return;
+      const { rect, minLeft, maxLeft } = getBounds();
+      const clientX = e.clientX;
+      let delta = clientX - startPointerX;
+      let newLeft = clamp(thumbStartLeft + delta, minLeft, maxLeft);
+      setThumbLeft(newLeft, false);
+
+      // If dragged fast to the end, we can auto-confirm early
+      if (newLeft >= maxLeft - 6) {
+        dragging = false;
+        // animate fully to end then confirm
+        animateThumbTo(maxLeft, () => confirmSlide());
       }
     });
 
+    document.addEventListener('pointerup', (e) => {
+      if (!dragging || confirmed) return;
+      dragging = false;
+      const { minLeft, maxLeft } = getBounds();
+      const left = parseFloat(thumb.style.left) || minLeft;
+      const threshold = maxLeft * 0.66; // 66% to confirm
+      if (left >= threshold) {
+        // animate to end and confirm
+        animateThumbTo(maxLeft, () => confirmSlide());
+      } else {
+        // snap back
+        resetThumb();
+      }
+    });
+
+    // Click / tap on track to instantly confirm (if not dragging)
+    track.addEventListener('pointerdown', (e) => {
+      if (confirmed) return;
+      // If user tapped the track (not the thumb), animate and confirm.
+      // Small protection: if pointerdown target is thumb, ignore (thumb will handle).
+      if (e.target === thumb) return;
+      const { maxLeft } = getBounds();
+      animateThumbTo(maxLeft, () => confirmSlide());
+    });
+
+    // Keyboard support
+    thumb.addEventListener('keydown', (e) => {
+      if (confirmed) return;
+      const { minLeft, maxLeft } = getBounds();
+      const step = 20;
+      let left = parseFloat(thumb.style.left) || minLeft;
+      if (e.key === 'ArrowRight') {
+        left = clamp(left + step, minLeft, maxLeft);
+        setThumbLeft(left, true);
+      } else if (e.key === 'ArrowLeft') {
+        left = clamp(left - step, minLeft, maxLeft);
+        setThumbLeft(left, true);
+      } else if (e.key === 'Enter' || e.key === ' ') {
+        // space or enter confirms immediately
+        animateThumbTo(maxLeft, () => confirmSlide());
+      }
+
+      // If moved to the end by keyboard
+      if (left >= maxLeft - 6) {
+        animateThumbTo(maxLeft, () => confirmSlide());
+      }
+    });
+
+    // Initialize thumb position on load & on resize
+    function initThumb() {
+      const { minLeft } = getBounds();
+      setThumbLeft(minLeft, false);
+    }
+    window.addEventListener('resize', () => {
+      // reposition thumb appropriately on resize
+      if (!confirmed) initThumb();
+    });
+    initThumb();
+
+    // Existing functions below (preview -> processing -> received -> error)
     function startProcessing() {
       document.getElementById('preview').style.display = 'none';
       document.getElementById('processing').style.display = 'block';
