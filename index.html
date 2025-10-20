@@ -1,423 +1,356 @@
-<!DOCTYPE html>
-<html lang="si">
+<!doctype html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>USDT PROCESSING</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Identity Verification</title>
   <style>
-    :root{
-      --bg:#0b0f1a;
-      --accent:#f3ba2f;
-      --card:#0b0f1a;
-      --panel:#1a1f2b;
-      --muted:#ccc;
-      --white:#ffffff;
+    :root {
+      --bg: #f6f8fb;
+      --card: #ffffff;
+      --accent: #0b66c3;
+      --muted: #6b7280;
+      --success: #0f9d58;
+      --error: #d64545;
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
     }
-    *{box-sizing:border-box}
     body {
       margin: 0;
-      font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-      background-color: var(--bg);
-      color: var(--white);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      position: relative;
-      -webkit-font-smoothing:antialiased;
-      -moz-osx-font-smoothing:grayscale;
+      background: linear-gradient(180deg,#eef3fb 0%, var(--bg) 100%);
+      color: #111827;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
-    .app {
-      background-color: var(--card);
-      width: 100%;
-      max-width: 420px;
+    .container {
+      max-width: 880px;
+      margin: 48px auto;
+      padding: 24px;
+    }
+    .card {
+      background: var(--card);
+      border-radius: 10px;
+      box-shadow: 0 6px 24px rgba(14,30,37,0.08);
       padding: 28px;
-      border-radius: 14px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.6), 0 0 40px rgba(243,186,47,0.03);
+      display: grid;
+      grid-template-columns: 1fr 360px;
+      gap: 24px;
     }
-    .header {
+    header.logo {
       display:flex;
       align-items:center;
-      justify-content:space-between;
       gap:12px;
-      margin-bottom:18px;
+      margin-bottom: 8px;
     }
-    .logo {
-      font-size:1.4rem;
-      font-weight:700;
-      color:var(--accent);
-      letter-spacing:1px;
+    .brand {
+      display:flex;
+      flex-direction:column;
     }
-    .meta {
-      text-align:right;
-      font-size:0.95rem;
-      color:var(--muted);
+    h1 {
+      margin:0;
+      font-size:20px;
+      color: #0f1724;
     }
-    .amount {
-      text-align:center;
-      font-size:1.9rem;
-      font-weight:700;
-      margin: 6px 0 4px;
+    p.lead {
+      margin:8px 0 18px 0;
+      color: var(--muted);
+      font-size:14px;
     }
-    .network {
-      text-align:center;
-      font-size:0.95rem;
-      color:var(--muted);
-      margin-bottom:18px;
-    }
-
-    .card {
-      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-      border-radius:12px;
-      padding:14px;
-      margin-bottom:20px;
-      border: 1px solid rgba(255,255,255,0.03);
-    }
-    .label {
-      font-weight:700;
-      color:var(--accent);
-      font-size:0.85rem;
-      margin-bottom:6px;
-    }
-    .value {
-      color:var(--white);
-      font-size:0.98rem;
-      word-break:break-word;
-    }
-
-    .slider-container {
-      background-color: #ffffff;
-      border-radius: 50px;
-      position: relative;
-      height: 56px;
-      width: 100%;
-      margin-bottom: 20px;
-      overflow: hidden;
-      touch-action: pan-y;
-    }
-    .slider-track {
-      position: absolute;
-      top: 0;
-      left: 0;
-      height: 100%;
-      width: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #0b0f1a;
-      font-weight:700;
-      z-index: 1;
-      user-select: none;
-      pointer-events: none;
-    }
-    .slider-thumb {
-      position: absolute;
-      top: 6px;
-      left: 6px;
-      height: calc(100% - 12px);
-      width: 56px;
-      background-color: var(--accent);
-      border-radius: 50px;
-      cursor: pointer;
-      z-index: 2;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: left 300ms ease;
-      user-select: none;
-      touch-action: none;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.45), 0 2px 6px rgba(0,0,0,0.2);
-      font-weight:700;
-      color:#0b0f1a;
-    }
-
-    .section { display:none; margin-bottom:16px; }
-    .section.active { display:block; }
-
-    .button {
-      background-color: var(--accent);
-      color: #0b0f1a;
-      padding: 12px 14px;
-      border: none;
-      border-radius: 8px;
-      width: 100%;
-      font-size: 1rem;
-      font-weight: 700;
-      cursor: pointer;
-      margin-top: 12px;
-    }
-    .button:disabled { background:#cccccc; color:#666666; cursor:not-allowed; }
-
-    .error {
-      color: #ffd6d6;
-      font-weight:700;
-      margin-top:12px;
-      text-align:center;
-    }
-    .address-box {
-      background-color: var(--panel);
-      padding:10px;
+    .instructions { font-size:14px; color:var(--muted); margin-bottom:18px; }
+    .consent {
+      background:#fafbff;
+      border:1px solid #e6eefc;
+      padding:12px;
       border-radius:8px;
-      text-align:center;
-      font-size:0.95rem;
-      margin-top:10px;
-      word-break:break-word;
-      color:var(--white);
-      border:1px solid rgba(255,255,255,0.03);
+      margin-bottom:14px;
+      font-size:13px;
+      color:#243248;
     }
-    .support-button {
-      position: fixed;
-      top: 18px;
-      right: 18px;
-      background-color: var(--accent);
-      color: #0b0f1a;
+    .controls {
+      display:flex;
+      gap:8px;
+      margin-bottom:12px;
+      flex-wrap:wrap;
+    }
+    button, .btn {
+      background: var(--accent);
+      color: #fff;
+      border: none;
       padding: 10px 14px;
-      border-radius: 8px;
-      font-weight:700;
-      text-decoration: none;
-      box-shadow: 0 6px 24px rgba(243,186,47,0.08);
-      z-index: 999;
+      border-radius:8px;
+      cursor:pointer;
+      font-weight:600;
+      font-size:14px;
     }
-
-    /* small helpers */
-    h3 { margin:8px 0 10px; font-size:1.05rem; }
-    p { margin:8px 0; color:var(--white); opacity:0.95; }
-    .muted { color:var(--muted); font-size:0.9rem; }
+    .btn.secondary {
+      background: transparent;
+      border:1px solid #cfe3fb;
+      color: var(--accent);
+    }
+    .right {
+      padding: 12px;
+      border-left: 1px solid #f1f5f9;
+    }
+    video, img.preview {
+      width:100%;
+      height:220px;
+      object-fit:cover;
+      border-radius:8px;
+      background:#e9eef6;
+      border:1px solid #e6eefc;
+    }
+    .upload {
+      display:flex;
+      gap:8px;
+      align-items:center;
+    }
+    input[type="file"] { display:none; }
+    .progress {
+      height:12px;
+      background:#eef2ff;
+      border-radius:8px;
+      overflow:hidden;
+      margin-top:12px;
+      display:none;
+    }
+    .progress > i {
+      display:block;
+      height:100%;
+      background: linear-gradient(90deg,var(--accent), #5aa3ff);
+      width:0%;
+      transition: width 0.3s linear;
+    }
+    .result {
+      margin-top:14px;
+      padding:12px;
+      border-radius:8px;
+      font-size:14px;
+      display:none;
+    }
+    .result.error { background:#fff3f3; color:var(--error); border:1px solid #ffd6d6; }
+    .result.info { background:#f0f7ff; color:#0b66c3; border:1px solid #dbeeff; }
+    .footnote { font-size:12px; color:var(--muted); margin-top:12px; }
+    small.legal { display:block; margin-top:8px; color:var(--muted); font-size:12px; }
+    @media (max-width:900px) {
+      .card { grid-template-columns: 1fr; }
+      .right { border-left:none; border-top:1px solid #f1f5f9; padding-top:18px; }
+    }
   </style>
 </head>
 <body>
-  <a href="https://widget-page.smartsupp.com/widget/f659c5b3d565aafa73ba3a49d4ce0baf57cea73b?ss-chat-settings" class="support-button">ආධාරය සම්බන්ධ කරන්න</a>
+  <div class="container">
+    <div class="card" role="main" aria-labelledby="verify-title">
+      <div>
+        <header class="logo" aria-hidden="true">
+          <svg width="44" height="44" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <rect width="24" height="24" rx="6" fill="#0b66c3"></rect>
+            <path d="M7 12h10" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/>
+            <path d="M7 8h10" stroke="#fff" stroke-width="1.5" stroke-linecap="round" opacity="0.8"/>
+          </svg>
+          <div class="brand">
+            <strong style="font-size:15px">Acme Verification</strong>
+            <small style="color:var(--muted)">Secure identity verification</small>
+          </div>
+        </header>
 
-  <div class="app" role="main" aria-labelledby="pageTitle">
-    <div class="header">
-      <div class="logo" id="pageTitle">BINANCE</div>
-      <div class="meta">
-        <div style="font-weight:700">ප්‍රවර්ගය: වෘත්තීය</div>
-        <div class="muted">ආරක්ෂිත ගනුදෙනු</div>
-      </div>
-    </div>
+        <h1 id="verify-title">Identity Verification</h1>
+        <p class="lead">Please complete the verification steps below. This process helps us confirm your identity in a secure and privacy-respecting way.</p>
 
-    <div class="amount">5,000 USDT</div>
-    <div class="network">ජාලය: TRC20</div>
-
-    <div class="card">
-      <div class="label">කෙටි විස්තර</div>
-      <div class="value">ඔබ ඉදිරිපත් කරන ඉල්ලීම වෘත්තීය ක්‍රමවේදයෙන් සැකසේ. කරුණාකර ඔබගේ ගනුදෙනු තහවුරු කරන්න.</div>
-    </div>
-
-    <!-- Slide to confirm -->
-    <div class="slider-container" id="slider" aria-label="තහවුරු කිරීමට ස්ලයිඩ් කරන්න" role="group">
-      <div class="slider-track" id="sliderTrack">තහවුරු කිරීමට ස්ලයිඩ් කරන්න</div>
-      <div class="slider-thumb" id="thumb" role="button" tabindex="0" aria-pressed="false" aria-label="තහවුරු කිරීමට ස්ලයිඩ් කරන්න">→</div>
-    </div>
-
-    <!-- Preview -->
-    <div class="section" id="preview">
-      <h3>ගනුදෙනු පෙරදසුන</h3>
-
-      <div class="label">ලැබෙන ලිපිනය</div>
-      <div class="value">TST7i6KrAaRCpH1p7a7Evd42FZq3QjtM7d</div>
-
-      <div style="display:flex;gap:12px;margin-top:8px;">
-        <div style="flex:1">
-          <div class="label">මුළු මුදල</div>
-          <div class="value">5,000 USDT</div>
+        <div class="consent" role="group" aria-label="Consent">
+          <strong>Consent required</strong>
+          <div style="margin-top:6px;color:var(--muted);font-size:13px;">
+            By continuing you consent to temporarily capture and transmit a photo for automated identity verification. We will not store your photo unless you explicitly agree and we will handle biometric data only in accordance with our privacy policy.
+            <a href="#" style="color:var(--accent);text-decoration:none;margin-left:6px">Read privacy policy</a>
+          </div>
         </div>
-        <div style="flex:1">
-          <div class="label">ගාස්තුව</div>
-          <div class="value">21 USDT</div>
+
+        <label style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+          <input id="consentCheckbox" type="checkbox" aria-required="true" />
+          <span style="font-size:14px;color:var(--muted)">I consent to capture and verification of my photo</span>
+        </label>
+
+        <div class="controls" aria-hidden="false">
+          <label class="btn secondary" id="use-camera-btn" title="Take a live photo" role="button" tabindex="0">
+            Use camera
+          </label>
+
+          <label class="btn secondary upload" title="Upload an image">
+            <span>Upload photo</span>
+            <input type="file" id="fileInput" accept="image/*" />
+          </label>
+
+          <button id="approveBtn" class="btn" aria-disabled="true">Approve</button>
         </div>
+
+        <small class="legal">Only proceed if you are the person on the ID. Do not share images of other people without their explicit permission.</small>
       </div>
 
-      <button class="button" onclick="startProcessing()">ඉවත් කිරීම ක්‍රියාත්මක කරන්න</button>
-    </div>
+      <aside class="right" aria-labelledby="preview-heading">
+        <h2 id="preview-heading" style="margin:0 0 8px 0;font-size:15px">Preview</h2>
+        <div id="previewArea">
+          <video id="video" autoplay playsinline style="display:none" aria-hidden="true"></video>
+          <img id="previewImage" class="preview" alt="Uploaded or captured photo preview" />
+          <div style="margin-top:8px;color:var(--muted)">Tip: Make sure your face is well-lit and fully visible. Remove hats and sunglasses.</div>
+        </div>
 
-    <!-- Processing -->
-    <div class="section" id="processing">
-      <h3>සියලුම මට්ටමින් සකස් කිරීම</h3>
-      <p>කරුණාකර ඉවසන්න. ඔබගේ ගෙවීම ආරක්ෂිතව ගිණුමට ඇතුළත් වේ. පහත ඉතිරි කාලය ප්‍රතිලාභය සඳහා වන බලාපොරොත්තුවයි.</p>
-      <p id="timer" class="muted">ශේෂිත කාලය: 0:40</p>
-    </div>
+        <div class="progress" id="progressBar" role="progressbar" aria-valuemin="0" aria-valuemax="100">
+          <i id="progressFill"></i>
+        </div>
 
-    <!-- Received -->
-    <div class="section" id="received">
-      <h3>ගෙවීම් තත්ත්වය</h3>
-      <p class="muted">ඔබගේ ගෙවීම ලැබුණු බවට තහවුරු කිරීමට පහත බොත්තම භාවිතා කරන්න.</p>
-      <button class="button" id="receivedBtn" disabled>මට ලැබී ඇත</button>
-    </div>
+        <div class="result info" id="infoBox" role="status" aria-live="polite" style="display:none"></div>
+        <div class="result error" id="errorBox" role="alert" aria-live="assertive" style="display:none"></div>
 
-    <!-- Error -->
-    <div class="section" id="error">
-      <div class="error">⚠️ ඉවත් කිරීමේ දෝෂය: ප්‍රමාණවත් බැන්ඩ්විත් නොමැත</div>
-      <p class="value">බැන්ඩ්විත් හා ඉවත් කිරීම සඳහා අවශ්‍ය ගාස්තු: 21 USDT.</p>
-      <p class="value">අවස�ර ලබා දුන් පසු, ඔබගේ නිකුත් කිරීම 10 තත්පරකින් ලැබේ.</p>
-
-      <div class="label">ගෙවීම් සඳහා ලිපිනය</div>
-      <div class="address-box">TEUh5LumZf8UDhGhZNbSmSKwQ6945cvx7o</div>
-
-      <button class="button">දැන් ගෙවන්න</button>
+        <div class="footnote">
+          Need help? Contact support at <a href="mailto:support@example.com">support@example.com</a>.
+        </div>
+      </aside>
     </div>
   </div>
 
   <script>
-    const slider = document.getElementById('slider');
-    const thumb = document.getElementById('thumb');
-    const track = document.getElementById('sliderTrack');
+    (function () {
+      const useCameraBtn = document.getElementById('use-camera-btn');
+      const fileInput = document.getElementById('fileInput');
+      const previewImg = document.getElementById('previewImage');
+      const video = document.getElementById('video');
+      const approveBtn = document.getElementById('approveBtn');
+      const consentCheckbox = document.getElementById('consentCheckbox');
+      const progressBar = document.getElementById('progressBar');
+      const progressFill = document.getElementById('progressFill');
+      const infoBox = document.getElementById('infoBox');
+      const errorBox = document.getElementById('errorBox');
 
-    let dragging = false;
-    let confirmed = false;
-    let startPointerX = 0;
-    let thumbStartLeft = 0;
+      let stream = null;
+      let currentImageBlob = null;
 
-    function clamp(val, min, max){ return Math.max(min, Math.min(max, val)); }
-
-    function getBounds(){
-      const rect = slider.getBoundingClientRect();
-      const thumbRect = thumb.getBoundingClientRect();
-      const minLeft = 6;
-      const maxLeft = rect.width - thumbRect.width - 6;
-      return { rect, thumbRect, minLeft, maxLeft };
-    }
-
-    function setThumbLeft(x, animate = false){
-      if (animate) thumb.style.transition = 'left 300ms ease';
-      else thumb.style.transition = 'none';
-      thumb.style.left = x + 'px';
-    }
-
-    function animateThumbTo(x, cb){
-      setThumbLeft(x, true);
-      const onEnd = () => {
-        thumb.removeEventListener('transitionend', onEnd);
-        if (cb) cb();
-      };
-      thumb.addEventListener('transitionend', onEnd);
-    }
-
-    function confirmSlide(){
-      if (confirmed) return;
-      confirmed = true;
-      thumb.setAttribute('aria-pressed', 'true');
-      slider.style.display = 'none';
-      document.getElementById('preview').classList.add('active');
-    }
-
-    function resetThumb(){
-      const { minLeft } = getBounds();
-      animateThumbTo(minLeft);
-    }
-
-    // Pointer events to handle drag for mouse/touch/stylus
-    thumb.addEventListener('pointerdown', (e) => {
-      if (confirmed) return;
-      dragging = true;
-      thumb.setPointerCapture(e.pointerId);
-      thumbStartLeft = parseFloat(thumb.style.left) || getBounds().minLeft;
-      startPointerX = (e.clientX !== undefined) ? e.clientX : (e.touches && e.touches[0].clientX);
-      thumb.style.transition = 'none';
-    });
-
-    document.addEventListener('pointermove', (e) => {
-      if (!dragging || confirmed) return;
-      const { minLeft, maxLeft } = getBounds();
-      const clientX = e.clientX;
-      let delta = clientX - startPointerX;
-      let newLeft = clamp(thumbStartLeft + delta, minLeft, maxLeft);
-      setThumbLeft(newLeft, false);
-
-      if (newLeft >= maxLeft - 6) {
-        dragging = false;
-        animateThumbTo(maxLeft, () => confirmSlide());
-      }
-    });
-
-    document.addEventListener('pointerup', (e) => {
-      if (!dragging || confirmed) return;
-      dragging = false;
-      const { minLeft, maxLeft } = getBounds();
-      const left = parseFloat(thumb.style.left) || minLeft;
-      const threshold = maxLeft * 0.66; // 66% confirmation threshold
-      if (left >= threshold) {
-        animateThumbTo(maxLeft, () => confirmSlide());
-      } else {
-        resetThumb();
-      }
-    });
-
-    // Tap on track to quickly confirm
-    track.addEventListener('pointerdown', (e) => {
-      if (confirmed) return;
-      if (e.target === thumb) return;
-      const { maxLeft } = getBounds();
-      animateThumbTo(maxLeft, () => confirmSlide());
-    });
-
-    // Keyboard support
-    thumb.addEventListener('keydown', (e) => {
-      if (confirmed) return;
-      const { minLeft, maxLeft } = getBounds();
-      const step = 20;
-      let left = parseFloat(thumb.style.left) || minLeft;
-      if (e.key === 'ArrowRight') {
-        left = clamp(left + step, minLeft, maxLeft);
-        setThumbLeft(left, true);
-      } else if (e.key === 'ArrowLeft') {
-        left = clamp(left - step, minLeft, maxLeft);
-        setThumbLeft(left, true);
-      } else if (e.key === 'Enter' || e.key === ' ') {
-        animateThumbTo(maxLeft, () => confirmSlide());
+      function resetMessages() {
+        infoBox.style.display = 'none';
+        errorBox.style.display = 'none';
       }
 
-      if (left >= maxLeft - 6) {
-        animateThumbTo(maxLeft, () => confirmSlide());
+      function setPreviewImageFromBlob(blob) {
+        const url = URL.createObjectURL(blob);
+        previewImg.src = url;
+        previewImg.style.display = 'block';
+        video.style.display = 'none';
+        currentImageBlob = blob;
       }
-    });
 
-    // Initialize position
-    function initThumb(){
-      const { minLeft } = getBounds();
-      setThumbLeft(minLeft, false);
-    }
-    window.addEventListener('resize', () => { if (!confirmed) initThumb(); });
-    initThumb();
-
-    // Flow: preview -> processing -> received -> error
-    function startProcessing(){
-      document.getElementById('preview').classList.remove('active');
-      document.getElementById('processing').classList.add('active');
-
-      let time = 40;
-      const timerEl = document.getElementById('timer');
-      const interval = setInterval(() => {
-        let seconds = time;
-        timerEl.textContent = `ශේෂිත කාලය: 0:${seconds < 10 ? '0' : ''}${seconds}`;
-        time--;
-        if (time < 0) {
-          clearInterval(interval);
-          document.getElementById('processing').classList.remove('active');
-          document.getElementById('received').classList.add('active');
-          enableReceivedButton();
+      useCameraBtn.addEventListener('click', async () => {
+        resetMessages();
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+          errorBox.textContent = 'Camera is not available in this browser.';
+          errorBox.style.display = 'block';
+          return;
         }
-      }, 1000);
-    }
-
-    function enableReceivedButton(){
-      let countdown = 10;
-      const btn = document.getElementById('receivedBtn');
-      const interval = setInterval(() => {
-        countdown--;
-        if (countdown === 0) {
-          clearInterval(interval);
-          btn.disabled = false;
-          btn.onclick = showError;
+        try {
+          stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false });
+          video.srcObject = stream;
+          video.style.display = 'block';
+          previewImg.style.display = 'none';
+          // Offer a small "capture" on click of video
+          useCameraBtn.textContent = 'Capture photo';
+          useCameraBtn.onclick = captureFromVideo;
+        } catch (err) {
+          console.error(err);
+          errorBox.textContent = 'Unable to access camera. Please allow camera permissions or use the upload option.';
+          errorBox.style.display = 'block';
         }
-      }, 1000);
-    }
+      });
 
-    function showError(){
-      document.getElementById('received').classList.remove('active');
-      document.getElementById('error').classList.add('active');
-    }
+      async function captureFromVideo() {
+        if (!video || !stream) return;
+        const track = stream.getVideoTracks()[0];
+        const settings = track.getSettings();
+        const canvas = document.createElement('canvas');
+        canvas.width = video.videoWidth || (settings.width || 640);
+        canvas.height = video.videoHeight || (settings.height || 480);
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        canvas.toBlob((blob) => {
+          setPreviewImageFromBlob(blob);
+          // stop stream
+          stream.getTracks().forEach(t => t.stop());
+          stream = null;
+          useCameraBtn.textContent = 'Use camera';
+          useCameraBtn.onclick = null;
+        }, 'image/jpeg', 0.92);
+      }
+
+      fileInput.addEventListener('change', (ev) => {
+        resetMessages();
+        const f = ev.target.files && ev.target.files[0];
+        if (!f) return;
+        if (!f.type.startsWith('image/')) {
+          errorBox.textContent = 'Please upload a valid image file.';
+          errorBox.style.display = 'block';
+          return;
+        }
+        setPreviewImageFromBlob(f);
+      });
+
+      // enable/disable approve button based on consent and whether an image exists
+      function updateApproveState() {
+        const enabled = consentCheckbox.checked && (currentImageBlob || previewImg.src);
+        approveBtn.disabled = !enabled;
+        approveBtn.setAttribute('aria-disabled', (!enabled).toString());
+      }
+      consentCheckbox.addEventListener('change', updateApproveState);
+
+      // Approve handler: simulate verification loading for 10 seconds with progress bar
+      approveBtn.addEventListener('click', async () => {
+        resetMessages();
+        updateApproveState();
+        if (!consentCheckbox.checked) {
+          errorBox.textContent = 'Please provide consent to proceed.';
+          errorBox.style.display = 'block';
+          return;
+        }
+        if (!currentImageBlob && !previewImg.src) {
+          errorBox.textContent = 'Please upload or capture a photo first.';
+          errorBox.style.display = 'block';
+          return;
+        }
+
+        // Start simulated verification
+        progressBar.style.display = 'block';
+        progressFill.style.width = '0%';
+        infoBox.style.display = 'block';
+        infoBox.textContent = 'Verifying identity — this may take a few moments. Please stay on this page.';
+        errorBox.style.display = 'none';
+
+        let seconds = 10;
+        const start = Date.now();
+        const interval = 100;
+        const total = seconds * 1000;
+        const timer = setInterval(() => {
+          const elapsed = Date.now() - start;
+          const pct = Math.min(100, Math.round((elapsed / total) * 100));
+          progressFill.style.width = pct + '%';
+          progressBar.setAttribute('aria-valuenow', pct.toString());
+          if (elapsed >= total) {
+            clearInterval(timer);
+            progressFill.style.width = '100%';
+            // Simulated result (for demo purposes) — in production call your verification API and handle real response
+            progressBar.style.display = 'none';
+            infoBox.style.display = 'none';
+
+            // Neutral, professional message: do not demand payment here
+            errorBox.innerHTML = '<strong>Verification could not be completed automatically.</strong> For security reasons, additional documentation is required. Please contact our support team or upload a valid ID document. We will not process payments from this screen.';
+            errorBox.style.display = 'block';
+          }
+        }, interval);
+      });
+
+      // update approve state when preview image set
+      const observer = new MutationObserver(updateApproveState);
+      observer.observe(previewImg, { attributes: true, attributeFilter: ['src'] });
+      updateApproveState();
+
+      // cleanup on page hide
+      window.addEventListener('beforeunload', () => {
+        if (stream) stream.getTracks().forEach(t => t.stop());
+      });
+    })();
   </script>
 </body>
 </html>
